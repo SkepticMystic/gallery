@@ -1,16 +1,80 @@
 <script lang="ts">
+  import { ImageClient } from "$lib/clients/image/image.client.js";
+  import UploadImagesForm from "$lib/components/form/image/UploadImagesForm.svelte";
   import PieceForm from "$lib/components/form/piece/PieceForm.svelte";
+  import Picture from "$lib/components/image/Picture.svelte";
+  import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
+  import Empty from "$lib/components/ui/empty/empty.svelte";
+  import Separator from "$lib/components/ui/separator/separator.svelte";
+  import { Items } from "$lib/utils/items.util.js";
+  import { toast } from "svelte-sonner";
 
   let { data } = $props();
+
+  let piece = $state(data.piece);
 </script>
 
 <article>
   <header>
-    <h1>{data.piece.name}</h1>
+    <h1>{piece.name}</h1>
   </header>
 
   <PieceForm
     mode="update"
-    initial={data.piece}
+    initial={piece}
   />
+
+  <section>
+    <h2>Images</h2>
+
+    <UploadImagesForm
+      resource_kind="piece"
+      resource_id={piece.id}
+      after_upload={(results) => {
+        for (const r of results) {
+          if (r.ok) {
+            piece.images.push(r.data);
+          } else {
+            toast.error(r.error.message);
+          }
+        }
+      }}
+    />
+
+    <Separator />
+
+    <div class="flex flex-wrap gap-3">
+      {#each piece.images as image (image.id)}
+        <div class="flex flex-col gap-2">
+          <Picture
+            {image}
+            width={100}
+            height={100}
+          />
+
+          <ButtonGroup>
+            <Button
+              icon="lucide/trash"
+              variant="destructive"
+              onclick={() =>
+                ImageClient.delete(image.id).then((r) => {
+                  if (r.ok) {
+                    piece.images = Items.remove(piece.images, image.id);
+                  }
+                })}
+            >
+              Delete
+            </Button>
+          </ButtonGroup>
+        </div>
+      {:else}
+        <Empty
+          icon="lucide/frame"
+          title="No images"
+          description="There haven't been any images added to this piece yet"
+        />
+      {/each}
+    </div>
+  </section>
 </article>

@@ -15,7 +15,10 @@
   import FormButton from "../FormButton.svelte";
 
   let props:
-    | { mode: "create" }
+    | {
+        mode: "create";
+        initial?: Partial<Pick<PieceSchema["insert"], "gallery_id">>;
+      }
     | {
         mode: "update";
         initial: PieceSchema["update"];
@@ -27,10 +30,18 @@
 
   if (props.mode === "update") {
     form.fields.set(props.initial);
+  } else if (props.initial) {
+    if (props.initial.gallery_id) {
+      form.fields.gallery_id.set(props.initial.gallery_id);
+    }
   }
   $effect(() => {
     if (props.mode === "update") {
       form.fields.set(props.initial);
+    } else if (props.initial) {
+      if (props.initial.gallery_id) {
+        form.fields.gallery_id.set(props.initial.gallery_id);
+      }
     }
   });
 </script>

@@ -1,18 +1,30 @@
-import { command } from "$app/server";
+import { command, form } from "$app/server";
+import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import z from "zod";
 import { ImageSchema } from "../../server/db/models/image.model";
 import { get_session } from "../../services/auth.service";
 import { ImageService } from "../../services/image/image.service";
 
-export const upload_image_remote = command(
-  ImageSchema.insert.extend({ file: z.instanceof(File) }),
+export const upload_images_remote = form(
+  ImageSchema.insert.extend({
+    files: z
+      .array(z.instanceof(File))
+      .min(1, "No files to upload")
+      .max(IMAGE_HOSTING.LIMITS.MAX_COUNT.PER_RESOURCE),
+  }),
   async (input) => {
+    console.log("upload_images_remote", input);
     const { session } = await get_session();
 
-    return await ImageService.upload(input.file, {
-      ...input,
-      org_id: session.org_id,
-    });
+    return await Promise.all(
+      input.files.map((file) =>
+        ImageService.upload(file, {
+          org_id: session.org_id,
+          resource_id: input.resource_id,
+          resource_kind: input.resource_kind,
+        }),
+      ),
+    );
   },
 );
 

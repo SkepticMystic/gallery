@@ -93,10 +93,8 @@ export const ImageService = {
 
       const res = await ImageRepo.create({
         ...input,
-        url: upload.data.image.url,
-        response: upload.data.response,
+        ...upload.data,
         provider: ImageHostingService.provider,
-        external_id: upload.data.image.external_id,
         thumbhash: thumbhash.ok ? thumbhash.data : null,
       });
 

@@ -48,6 +48,10 @@
   );
 
   const thumbhash_url = $derived(ImageClient.decode_thumbhash(image));
+
+  // const p: BaseImageProps<CloudinaryOperations, CloudinaryOptions> = {
+  //   operations: {},
+  // };
 </script>
 
 {#snippet img()}
@@ -55,6 +59,8 @@
     <ImageBase
       {alt}
       {style}
+      {width}
+      {height}
       {loading}
       {fetchpriority}
       src={image?.url ?? src}
@@ -62,15 +68,13 @@
       background={thumbhash_url}
       class={cn("h-full w-full rounded-md", klass)}
       operations={{
-        cloudinary: {
-          f: "auto",
-          q: "auto",
-          g: "auto",
+        f: "auto",
+        q: "auto",
+        g: "auto",
 
-          // "auto" seems fancy, but expensive
-          // "fill" seems like a cheaper alternative
-          c: "auto",
-        },
+        // "auto" seems fancy, but expensive
+        // "fill" seems like a cheaper alternative
+        c: "auto",
       }}
     />
   {:else if fallback}

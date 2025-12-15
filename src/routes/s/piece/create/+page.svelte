@@ -1,5 +1,7 @@
 <script lang="ts">
   import PieceForm from "$lib/components/form/piece/PieceForm.svelte";
+
+  let { data } = $props();
 </script>
 
 <article>
@@ -7,5 +9,8 @@
     <h1>Create a piece</h1>
   </header>
 
-  <PieceForm mode="create" />
+  <PieceForm
+    mode="create"
+    initial={{ gallery_id: data.search.gallery_id }}
+  />
 </article>

@@ -7,7 +7,7 @@
   import { list_my_galleries_remote } from "$lib/remote/gallery/gallery.remote";
   import { result } from "$lib/utils/result.util";
 
-  const galleries = list_my_galleries_remote();
+  const galleries = $derived(await list_my_galleries_remote());
 </script>
 
 <article>
@@ -23,12 +23,11 @@
   </header>
 
   <ItemList
-    items={result.unwrap_or(galleries.current, [])}
+    items={result.unwrap_or(galleries, [])}
     empty={{
       icon: "lucide/plus",
       title: "You don't have any galleries yet",
       description: "Create one to get started",
-      loading: galleries.loading,
     }}
   >
     {#snippet item(gallery)}

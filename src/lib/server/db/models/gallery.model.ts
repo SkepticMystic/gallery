@@ -17,6 +17,7 @@ import { friendly_url_schema } from "../../../schema/url/url.schema";
 import { OrganizationTable } from "./auth.model";
 import { ImageTable } from "./image.model";
 import { Schema } from "./index.schema";
+import { PieceTable } from "./piece.model";
 
 // Define Gallery table schema
 export const GalleryTable = pgTable(
@@ -65,6 +66,7 @@ export const gallery_relations = relations(GalleryTable, ({ one, many }) => ({
   }),
 
   images: many(ImageTable),
+  pieces: many(PieceTable),
 }));
 
 export type Gallery = typeof GalleryTable.$inferSelect;

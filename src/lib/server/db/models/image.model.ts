@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
+  integer,
   jsonb,
   pgEnum,
   pgTable,
@@ -11,7 +12,7 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { IMAGE_HOSTING } from "../../../const/image/image_hosting.const";
 import { RESOURCES } from "../../../const/resource/resource.const";
-import { UserTable } from "./auth.model";
+import { OrganizationTable } from "./auth.model";
 import { GalleryTable } from "./gallery.model";
 import { Schema } from "./index.schema";
 import { PieceTable } from "./piece.model";
@@ -34,7 +35,7 @@ export const ImageTable = pgTable(
 
     org_id: uuid()
       .notNull()
-      .references(() => UserTable.id, { onDelete: "cascade" }),
+      .references(() => OrganizationTable.id, { onDelete: "cascade" }),
 
     url: varchar({ length: 2048 }).notNull(),
     provider: image_provider_enum().notNull(),
@@ -47,6 +48,10 @@ export const ImageTable = pgTable(
     resource_kind: image_resource_kind_enum().notNull(),
 
     thumbhash: varchar({ length: 100 }),
+
+    size: integer().notNull(),
+    width: integer().notNull(),
+    height: integer().notNull(),
 
     admin_approved: boolean().default(false).notNull(),
 

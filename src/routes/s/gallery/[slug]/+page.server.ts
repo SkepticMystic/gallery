@@ -1,4 +1,5 @@
 import { ERROR } from "$lib/const/error.const";
+import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
 import { get_session } from "$lib/services/auth.service";
@@ -12,6 +13,30 @@ export const load = (async ({ params }) => {
     Repo.query(
       db.query.gallery.findFirst({
         where: (gallery, { eq }) => eq(gallery.slug, params.slug),
+
+        with: {
+          images: {
+            limit: IMAGE_HOSTING.LIMITS.MAX_COUNT.PER_RESOURCE,
+            columns: { id: true, url: true, thumbhash: true },
+          },
+
+          pieces: {
+            limit: 5,
+            columns: {
+              name: true,
+              slug: true,
+              medium: true,
+              price_cents: true,
+              year_created: true,
+            },
+            with: {
+              images: {
+                limit: 1,
+                columns: { id: true, url: true, thumbhash: true },
+              },
+            },
+          },
+        },
       }),
     ),
   ]);
