@@ -57,49 +57,57 @@ export const ImageService = {
     file: File,
     input: Pick<Image, "resource_id" | "resource_kind" | "org_id">,
   ): Promise<App.Result<Image>> => {
-    if (file.size > IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES) {
-      return result.err({
-        status: 413,
-        message: `Image exceeds size limit of ${Format.number(
-          IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES / (1024 * 1024),
-          {
-            style: "unit",
-            unit: "megabyte",
-            unitDisplay: "long",
-            maximumFractionDigits: 1,
-          },
-        )}`,
+    try {
+      if (file.size > IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES) {
+        return result.err({
+          status: 413,
+          message: `Image exceeds size limit of ${Format.number(
+            IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES / (1024 * 1024),
+            {
+              style: "unit",
+              unit: "megabyte",
+              unitDisplay: "long",
+              maximumFractionDigits: 1,
+            },
+          )}`,
+        });
+      }
+
+      const [count_limit, resource] = await Promise.all([
+        check_count_limit(input),
+        ResourceService.get_by_kind_and_id(input),
+      ]);
+
+      if (!resource.ok || resource.data.org_id !== input.org_id) {
+        return result.err(ERROR.NOT_FOUND);
+      } else if (!count_limit.ok) {
+        return count_limit;
+      }
+
+      const [upload, thumbhash] = await Promise.all([
+        ImageHostingService.upload(file),
+        // NOTE: Calling this second in line seems to help with the timeout issue
+        ThumbhashService.generate(file),
+      ]);
+      if (!upload.ok) return upload;
+
+      const res = await ImageRepo.create({
+        ...input,
+        url: upload.data.image.url,
+        response: upload.data.response,
+        provider: ImageHostingService.provider,
+        external_id: upload.data.image.external_id,
+        thumbhash: thumbhash.ok ? thumbhash.data : null,
       });
+
+      return res;
+    } catch (error) {
+      Log.error(error, "ImageService.upload.error");
+
+      captureException(error);
+
+      return result.err(ERROR.INTERNAL_SERVER_ERROR);
     }
-
-    const [count_limit, resource] = await Promise.all([
-      check_count_limit(input),
-      ResourceService.get_by_kind_and_id(input),
-    ]);
-
-    if (!resource.ok || resource.data.org_id !== input.org_id) {
-      return result.err({ message: "Resource not found" });
-    } else if (!count_limit.ok) {
-      return count_limit;
-    }
-
-    const [upload, thumbhash] = await Promise.all([
-      ImageHostingService.upload(file),
-      // NOTE: Calling this second in line seems to help with the timeout issue
-      ThumbhashService.generate(file),
-    ]);
-    if (!upload.ok) return upload;
-
-    const res = await ImageRepo.create({
-      ...input,
-      url: upload.data.image.url,
-      response: upload.data.response,
-      provider: ImageHostingService.provider,
-      external_id: upload.data.image.external_id,
-      thumbhash: thumbhash.ok ? thumbhash.data : null,
-    });
-
-    return res;
   },
 
   delete_many: async (

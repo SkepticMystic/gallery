@@ -1,27 +1,45 @@
+import { ERROR } from "$lib/const/error.const";
+import { db } from "$lib/server/db/drizzle.db";
+import { Repo } from "$lib/server/db/repos/index.repo";
 import type { ResourceKind } from "../../const/resource/resource.const";
 import { Log } from "../../utils/logger.util";
 import { result } from "../../utils/result.util";
 
-// WARN: Does not check user_id!
+// WARN: Does not check org_id!
 const get_by_kind_and_id = async (input: {
   resource_id: string;
   resource_kind: ResourceKind;
 }) => {
   switch (input.resource_kind) {
-    // case "business": {
-    //   const res = await Repo.query(
-    //     db.query.business.findFirst({
-    //       columns: { id: true, user_id: true, slug: true },
-    //       where: (res, { eq }) => eq(res.id, input.resource_id),
-    //     }),
-    //   );
+    case "gallery": {
+      const res = await Repo.query(
+        db.query.gallery.findFirst({
+          columns: { id: true, org_id: true, slug: true },
+          where: (res, { eq }) => eq(res.id, input.resource_id),
+        }),
+      );
 
-    //   if (!res.ok) {
-    //     return res;
-    //   } else {
-    //     return res.data ? result.suc(res.data) : result.err(E.NOT_FOUND);
-    //   }
-    // }
+      if (!res.ok) {
+        return res;
+      } else {
+        return res.data ? result.suc(res.data) : result.err(ERROR.NOT_FOUND);
+      }
+    }
+
+    case "piece": {
+      const res = await Repo.query(
+        db.query.piece.findFirst({
+          columns: { id: true, org_id: true, slug: true },
+          where: (res, { eq }) => eq(res.id, input.resource_id),
+        }),
+      );
+
+      if (!res.ok) {
+        return res;
+      } else {
+        return res.data ? result.suc(res.data) : result.err(ERROR.NOT_FOUND);
+      }
+    }
 
     default: {
       Log.error(`Unsupported image resource kind: ${input.resource_kind}`);

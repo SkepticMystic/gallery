@@ -11,7 +11,9 @@ const insert_one = async (
   input: Omit<typeof PieceTable.$inferInsert, "slug">,
 ): Promise<App.Result<Piece>> => {
   try {
-    const slug = Strings.slugify(input.name);
+    const slug =
+      Strings.slugify(input.name) + "-" + crypto.randomUUID().slice(0, 6);
+
     if (SLUG.RESTRICTED.includes(slug)) {
       return result.err({ ...ERROR.INVALID_SLUG, path: ["name"] });
     }
