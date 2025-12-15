@@ -1,7 +1,13 @@
-const CODES = ["NOT_FOUND", "INTERNAL_SERVER_ERROR"] as const;
+const CODES = ["NOT_FOUND", "INTERNAL_SERVER_ERROR", "INVALID_SLUG"] as const;
 export type AppErrorCode = (typeof CODES)[number];
 
 export const ERROR = {
+  INVALID_SLUG: {
+    status: 400,
+    level: "error",
+    code: "INVALID_SLUG",
+    message: "Invalid name, please choose a different one",
+  },
   NOT_FOUND: {
     status: 404,
     level: "error",

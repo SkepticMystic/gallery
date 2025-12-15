@@ -1,9 +1,9 @@
+import { ERROR } from "$lib/const/error.const";
 import { Log } from "$lib/utils/logger.util";
 import { result } from "$lib/utils/result.util";
 import type { FullQueryResults } from "@neondatabase/serverless";
 import { captureException } from "@sentry/sveltekit";
 import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
-import { ERROR } from "$lib/const/error.const";
 
 const query = async <D>(promise: Promise<D>): Promise<App.Result<D>> => {
   try {
@@ -15,9 +15,7 @@ const query = async <D>(promise: Promise<D>): Promise<App.Result<D>> => {
       Log.error(error, "Repo.query.error DrizzleQueryError");
 
       captureException(error, {
-        tags: {
-          query: error.query,
-        },
+        tags: { query: error.query },
       });
 
       return result.err(ERROR.INTERNAL_SERVER_ERROR);

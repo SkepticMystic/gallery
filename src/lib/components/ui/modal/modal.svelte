@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ComponentProps, Snippet } from "svelte";
+  import { mergeProps } from "svelte-toolbelt";
   import {
     buttonVariants,
     type ButtonSize,
@@ -16,6 +17,7 @@
   let {
     open,
     title,
+    disabled,
     description,
     size = "default",
     variant = "default",
@@ -31,6 +33,7 @@
     description?: string;
     size?: ButtonSize;
     variant?: ButtonVariant;
+    disabled?: boolean;
 
     trigger?: Snippet;
     trigger_child?: Snippet<[{ props: Record<string, unknown> }]>;
@@ -50,12 +53,13 @@
   {#if trigger_child}
     <ModalTrigger>
       {#snippet child({ props })}
-        {@render trigger_child({ props })}
+        {@render trigger_child({ props: mergeProps(props, { disabled }) })}
       {/snippet}
     </ModalTrigger>
   {:else}
     <ModalTrigger
       {title}
+      {disabled}
       class={buttonVariants({ variant, size })}
     >
       {@render trigger?.()}

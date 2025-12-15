@@ -1,0 +1,77 @@
+import { resolve } from "$app/paths";
+import { command, form, query } from "$app/server";
+import { db } from "$lib/server/db/drizzle.db";
+import {
+  GallerySchema,
+  GalleryTable,
+} from "$lib/server/db/models/gallery.model";
+import { Repo } from "$lib/server/db/repos/index.repo";
+import { get_session } from "$lib/services/auth.service";
+import { GalleryService } from "$lib/services/gallery/gallery.service";
+import { invalid, redirect } from "@sveltejs/kit";
+import { and, eq } from "drizzle-orm";
+import z from "zod";
+
+export const list_my_galleries_remote = query(async () => {
+  const { session } = await get_session();
+
+  const galleries = await Repo.query(
+    db.query.gallery.findMany({
+      where: (gallery, { eq }) => eq(gallery.org_id, session.org_id),
+
+      columns: { id: true, name: true, slug: true, logo: true },
+    }),
+  );
+
+  return galleries;
+});
+
+export const upsert_gallery_remote = form(
+  GallerySchema.insert.extend({ id: z.uuid().optional() }),
+  async (input) => {
+    console.log("upsert_gallery_remote.input", input);
+
+    const { session } = await get_session();
+
+    const res = input.id
+      ? await GalleryService.update_one(
+          { id: input.id, org_id: session.org_id },
+          input,
+        )
+      : await GalleryService.insert_one({
+          ...input,
+          org_id: session.org_id,
+        });
+
+    console.log("upsert_gallery_remote.res", res);
+
+    if (!res.ok) {
+      if (res.error.path) {
+        invalid(res.error);
+      } else {
+        return res;
+      }
+    } else {
+      redirect(302, resolve("/s/gallery/[slug]", res.data));
+    }
+  },
+);
+
+export const delete_gallery_by_id_remote = command(
+  z.uuid(), //
+  async (gallery_id) => {
+    const { session } = await get_session();
+
+    return await Repo.delete_one(
+      db
+        .delete(GalleryTable)
+        .where(
+          and(
+            eq(GalleryTable.id, gallery_id),
+            eq(GalleryTable.org_id, session.org_id),
+          ),
+        )
+        .execute(),
+    );
+  },
+);

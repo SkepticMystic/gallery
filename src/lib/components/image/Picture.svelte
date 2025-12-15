@@ -1,12 +1,15 @@
 <script lang="ts">
-  import { cn } from "$lib/utils/shadcn.util";
-  import { Image } from "@unpic/svelte/base";
+  import { ImageClient } from "$lib/clients/image/image.client";
+  import { Image as ImageBase } from "@unpic/svelte/base";
   import type { ClassValue } from "svelte/elements";
   import { transform } from "unpic/providers/cloudinary";
+  import type { Image } from "../../server/db/models/image.model";
+  import { cn } from "../../utils/shadcn.util";
   import Anchor from "../ui/anchor/Anchor.svelte";
 
   let {
     src,
+    alt,
     href,
     image,
     width,
@@ -18,6 +21,7 @@
     prioritize = false,
   }: {
     src?: string;
+    alt?: string;
     class?: ClassValue;
     loading?: "lazy" | "eager";
     fetchpriority?: "high" | "low";
@@ -26,7 +30,7 @@
     href?: string;
     fallback?: string;
     prioritize?: boolean;
-    image?: { url: string };
+    image?: Pick<Image, "url" | "thumbhash">;
   } = $props();
 
   // NOTE: ...rest props are readonly,
@@ -36,24 +40,38 @@
     fetchpriority ??= "high";
   }
 
-  const style = [
-    width ? `width: ${width}px` : "",
-    height ? `height: ${height}px` : "",
-  ]
-    .filter(Boolean)
-    .join("; ")
-    .trim();
+  const style = $derived(
+    [width ? `width: ${width}px` : "", height ? `height: ${height}px` : ""]
+      .filter(Boolean)
+      .join("; ")
+      .trim(),
+  );
+
+  const thumbhash_url = $derived(ImageClient.decode_thumbhash(image));
 </script>
 
 {#snippet img()}
   {#if image || src}
-    <Image
+    <ImageBase
+      {alt}
       {style}
       {loading}
       {fetchpriority}
       src={image?.url ?? src}
       transformer={transform}
+      background={thumbhash_url}
       class={cn("h-full w-full rounded-md", klass)}
+      operations={{
+        cloudinary: {
+          f: "auto",
+          q: "auto",
+          g: "auto",
+
+          // "auto" seems fancy, but expensive
+          // "fill" seems like a cheaper alternative
+          c: "auto",
+        },
+      }}
     />
   {:else if fallback}
     <div

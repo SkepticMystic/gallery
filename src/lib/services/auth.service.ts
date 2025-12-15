@@ -76,7 +76,7 @@ export const get_session = async (options?: Options) => {
     session: {
       ...session.session,
       member_id: session.session.member_id!,
-      org_id: session.session.activeOrganizationId,
+      org_id: session.session.activeOrganizationId!,
     },
   };
 };

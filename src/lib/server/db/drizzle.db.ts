@@ -2,7 +2,9 @@ import { DATABASE_URL } from "$env/static/private";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as AuthModels from "./models/auth.model";
-import * as TaskModel from "./models/task.model";
+import * as GalleryModel from "./models/gallery.model";
+import * as ImageModel from "./models/image.model";
+import * as PieceModel from "./models/piece.model";
 
 const client = neon(DATABASE_URL);
 
@@ -19,7 +21,11 @@ const {
   ...auth_rest
 } = AuthModels;
 
-const { TaskTable, ...task_rest } = TaskModel;
+const { ImageTable, ...image_rest } = ImageModel;
+
+const { GalleryTable, ...gallery_rest } = GalleryModel;
+
+const { PieceTable, ...piece_rest } = PieceModel;
 
 export const db = drizzle(client, {
   casing: "snake_case",
@@ -36,8 +42,16 @@ export const db = drizzle(client, {
     twoFactor: TwoFactorTable,
     ...auth_rest,
 
-    // Task
-    task: TaskTable,
-    ...task_rest,
+    // Image
+    image: ImageTable,
+    ...image_rest,
+
+    // Gallery
+    gallery: GalleryTable,
+    ...gallery_rest,
+
+    // Piece
+    piece: PieceTable,
+    ...piece_rest,
   },
 });
