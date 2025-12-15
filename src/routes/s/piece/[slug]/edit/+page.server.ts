@@ -15,7 +15,15 @@ export const load = (async ({ params }) => {
 
         with: {
           images: {
-            columns: { id: true, url: true, thumbhash: true },
+            columns: {
+              id: true,
+              url: true,
+              thumbhash: true,
+
+              size: true,
+              width: true,
+              height: true,
+            },
           },
         },
       }),
