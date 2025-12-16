@@ -3,6 +3,7 @@ const PROVIDER_IDS = ["cloudinary"] as const;
 export const IMAGE_HOSTING = {
   PROVIDER: {
     IDS: PROVIDER_IDS,
+    CURRENT: "cloudinary" as const satisfies (typeof PROVIDER_IDS)[number],
   },
 
   BLURHASH: {

@@ -63,6 +63,10 @@
 
     if (res) {
       after_upload?.(res);
+
+      if (res.every((r) => r.ok)) {
+        form.fields.files.set([]);
+      }
     }
   })}
   enctype="multipart/form-data"
@@ -124,9 +128,11 @@
   <Button
     type="submit"
     class="w-fit"
+    icon="lucide/upload"
     loading={form.pending > 0}
+    disabled={!form.fields.files.value()?.length}
   >
-    Submit
+    Upload images
   </Button>
 
   <FieldError errors={form.fields.allIssues()} />

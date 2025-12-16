@@ -26,7 +26,7 @@ export const load = (async ({ params }) => {
               name: true,
               slug: true,
               medium: true,
-              price_cents: true,
+              price: true,
               year_created: true,
             },
             with: {

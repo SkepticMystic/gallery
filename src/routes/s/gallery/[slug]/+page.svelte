@@ -73,7 +73,7 @@
             </span>
 
             <span>
-              {Format.currency(piece.price_cents / 100)}
+              {Format.currency(piece.price)}
             </span>
           {/snippet}
 
@@ -93,7 +93,7 @@
         <Empty
           icon="lucide/frame"
           title="No pieces"
-          description="This gallery has got any public pieces at the moment"
+          description="This gallery hasn't got any public pieces at the moment"
         />
       {/each}
     </div>

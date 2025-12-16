@@ -12,7 +12,7 @@
   <div class="my-14">
     <ButtonGroup>
       <ButtonGroup>
-        <Button href="/tasks">Tasks</Button>
+        <Button href="/gallery">Galleries</Button>
       </ButtonGroup>
 
       <ButtonGroup>

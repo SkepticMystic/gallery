@@ -1,11 +1,10 @@
 <script lang="ts">
   import { ImageClient } from "$lib/clients/image/image.client";
   import { Image as ImageBase } from "@unpic/svelte/base";
-  import type { ClassValue } from "svelte/elements";
+  import type { ClassValue, HTMLAttributeAnchorTarget } from "svelte/elements";
   import { transform } from "unpic/providers/cloudinary";
   import type { Image } from "../../server/db/models/image.model";
   import { cn } from "../../utils/shadcn.util";
-  import Anchor from "../ui/anchor/Anchor.svelte";
 
   let {
     src,
@@ -14,6 +13,7 @@
     image,
     width,
     height,
+    target,
     loading,
     fallback,
     class: klass,
@@ -30,6 +30,7 @@
     href?: string;
     fallback?: string;
     prioritize?: boolean;
+    target?: HTMLAttributeAnchorTarget;
     image?: Pick<Image, "url" | "thumbhash">;
   } = $props();
 
@@ -88,9 +89,12 @@
 {/snippet}
 
 {#if href}
-  <Anchor {href}>
+  <a
+    {href}
+    {target}
+  >
     {@render img()}
-  </Anchor>
+  </a>
 {:else}
   {@render img()}
 {/if}

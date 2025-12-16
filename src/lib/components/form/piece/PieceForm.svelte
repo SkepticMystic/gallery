@@ -133,7 +133,7 @@
 
       <FieldGroup>
         <Field
-          label="Width (cm)"
+          label="Width"
           orientation="responsive"
           field={form.fields.width_cm}
         >
@@ -142,13 +142,14 @@
               {...props}
               {...field?.as("number")}
               step={0.01}
+              addon="cm"
               class="sm:min-w-[300px]"
             />
           {/snippet}
         </Field>
 
         <Field
-          label="Height (cm)"
+          label="Height"
           orientation="responsive"
           field={form.fields.height_cm}
         >
@@ -157,13 +158,14 @@
               {...props}
               {...field?.as("number")}
               step={0.01}
+              addon="cm"
               class="sm:min-w-[300px]"
             />
           {/snippet}
         </Field>
 
         <Field
-          label="Depth (cm)"
+          label="Depth"
           orientation="responsive"
           field={form.fields.depth_cm}
         >
@@ -172,15 +174,14 @@
               {...props}
               {...field?.as("number")}
               step={0.01}
+              addon="cm"
               class="sm:min-w-[300px]"
             />
           {/snippet}
         </Field>
 
-        <FieldSeparator />
-
         <Field
-          label="Weight (kg)"
+          label="Weight"
           orientation="responsive"
           field={form.fields.weight_kg}
         >
@@ -189,12 +190,11 @@
               {...props}
               {...field?.as("number")}
               step={0.01}
+              addon="kg"
               class="sm:min-w-[300px]"
             />
           {/snippet}
         </Field>
-
-        <FieldSeparator />
 
         <Field
           label="Year created"
@@ -210,27 +210,27 @@
           {/snippet}
         </Field>
       </FieldGroup>
+      <FieldSeparator />
 
       <FieldGroup>
         <Field
           label="Price"
           orientation="responsive"
-          field={form.fields.price_cents}
+          field={form.fields.price}
         >
           {#snippet input({ props, field })}
-            {@const { value, ...field_props } = field!.as("number")}
             <Input
               {...props}
-              {...field_props}
+              {...field?.as("number")}
               addon="R"
               align="inline-start"
               class="sm:min-w-[300px]"
               step={0.01}
-              value={Number(value) / 100}
             />
           {/snippet}
         </Field>
       </FieldGroup>
+      <FieldSeparator />
 
       <Field
         label="Description"
@@ -263,5 +263,6 @@
         class="w-full"
       />
     </FieldGroup>
+    <FieldSeparator />
   </Fieldset>
 </form>

@@ -160,13 +160,15 @@
             class="hidden"
             {...form.fields.formatted_address.as("text")}
           />
+
+          <!-- NOTE: I _know_ they're actually numbers, but keep the type="text", otherwise we get browser form issues -->
           <input
             class="hidden"
-            {...form.fields.coord_lat.as("number")}
+            {...form.fields.coord_lat.as("text")}
           />
           <input
             class="hidden"
-            {...form.fields.coord_lng.as("number")}
+            {...form.fields.coord_lng.as("text")}
           />
 
           <GooglePlacesInput

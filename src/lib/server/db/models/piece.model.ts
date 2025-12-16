@@ -43,7 +43,7 @@ export const PieceTable = pgTable(
 
     year_created: integer().notNull().default(0),
 
-    price_cents: integer().notNull().default(0),
+    price: doublePrecision().notNull().default(0),
 
     // is_published: boolean().default(false).notNull(),
 
@@ -82,7 +82,7 @@ const pick = {
   width_cm: true,
   weight_kg: true,
 
-  price_cents: true,
+  price: true,
   year_created: true,
 } satisfies Partial<Record<keyof Piece, true>>;
 
@@ -98,16 +98,17 @@ const refinements = {
 
   medium: z.string().trim().min(1, "Please enter a medium"),
 
-  width_cm: z.coerce.number<string | number>().default(0),
-  height_cm: z.coerce.number<string | number>().default(0),
-  depth_cm: z.coerce.number<string | number>().default(0),
-  weight_kg: z.coerce.number<string | number>().default(0),
+  width_cm: z.coerce.number<number>().default(0),
+  height_cm: z.coerce.number<number>().default(0),
+  depth_cm: z.coerce.number<number>().default(0),
+  weight_kg: z.coerce.number<number>().default(0),
 
-  year_created: z.coerce.number<string | number>().int().default(0),
+  year_created: z.coerce.number<number>().int().default(0),
 
-  price_cents: z.coerce
-    .number<string | number>()
-    .transform((d) => d * 100)
+  price: z.coerce
+    .number<number>()
+    .min(0, "Price cannot be negative")
+    .max(100_000_000, "It can't be _that_ expensive...")
     .default(0),
 };
 
