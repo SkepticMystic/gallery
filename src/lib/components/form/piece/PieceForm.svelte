@@ -6,6 +6,7 @@
   import Fieldset from "$lib/components/ui/field/Fieldset.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import NativeSelect from "$lib/components/ui/native-select/native-select.svelte";
+  import Switch from "$lib/components/ui/switch/switch.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
   import { list_my_galleries_remote } from "$lib/remote/gallery/gallery.remote";
   import { upsert_piece_remote } from "$lib/remote/piece/piece.remote";
@@ -68,6 +69,22 @@
       {#if props.mode === "update"}
         <input {...form.fields.id.as("hidden", props.initial.id)} />
       {/if}
+
+      <Field
+        label="Publish"
+        orientation="responsive"
+        field={form.fields.is_published}
+        description="Show this piece to the public?"
+      >
+        {#snippet input({ props, field })}
+          <Switch
+            {...props}
+            {...field?.as("checkbox")}
+            required
+            type="button"
+          />
+        {/snippet}
+      </Field>
 
       <Field
         label="Title *"

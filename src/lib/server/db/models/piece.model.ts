@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   doublePrecision,
   index,
   integer,
@@ -29,11 +30,13 @@ export const PieceTable = pgTable(
       .notNull()
       .references(() => GalleryTable.id, { onDelete: "cascade" }),
 
+    is_published: boolean().default(false).notNull(),
+
     name: varchar({ length: 255 }).notNull(),
     slug: varchar({ length: 255 }).notNull().unique(),
     description: text().default("").notNull(),
 
-    medium: text(),
+    medium: text().notNull(),
 
     width_cm: doublePrecision().notNull().default(0),
     height_cm: doublePrecision().notNull().default(0),
@@ -72,6 +75,7 @@ export type Piece = typeof PieceTable.$inferSelect;
 
 const pick = {
   gallery_id: true,
+  is_published: true,
 
   name: true,
   description: true,

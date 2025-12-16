@@ -1,8 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import GalleryViewer from "$lib/components/blocks/gallery/GalleryViewer.svelte";
   import Picture from "$lib/components/image/Picture.svelte";
-  import GooglePlaceLink from "$lib/components/link/GooglePlaceLink.svelte";
-  import GoogleMapIFrame from "$lib/components/map/GoogleMapIFrame.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -12,17 +11,18 @@
   import { Format } from "$lib/utils/format.util";
 
   let { data } = $props();
+  const gallery = $state(data.gallery);
 </script>
 
 <article>
   <header class="flex flex-wrap items-center justify-between gap-2">
-    <h1>{data.gallery.name}</h1>
+    <h1>{gallery.name}</h1>
 
     <ButtonGroup>
       <ButtonGroup>
         <Button
           icon="lucide/pencil"
-          href={resolve("/s/gallery/[slug]/edit", data.gallery)}
+          href={resolve("/s/gallery/[slug]/edit", gallery)}
         >
           Edit
         </Button>
@@ -30,7 +30,7 @@
       <ButtonGroup>
         <Button
           icon="lucide/frame"
-          href={App.url("/s/piece/create", { gallery_id: data.gallery.id })}
+          href={App.url("/s/piece/create", { gallery_id: gallery.id })}
         >
           Add Piece
         </Button>
@@ -39,27 +39,19 @@
   </header>
 
   <section>
-    <pre class="font-mono">{JSON.stringify(data.gallery, null, 2)}</pre>
+    <pre class="font-mono">{JSON.stringify(gallery, null, 2)}</pre>
   </section>
 
-  <section id="location">
-    <h2>Location</h2>
-    <GooglePlaceLink
-      class="text-sm text-muted-foreground"
-      google_place_id={data.gallery.google_place_id}
-      formatted_address={data.gallery.formatted_address}
-    />
-    <GoogleMapIFrame
-      google_place_id={data.gallery.google_place_id}
-      formatted_address={data.gallery.formatted_address}
-    />
-  </section>
+  <GalleryViewer
+    {gallery}
+    prerendered={data.prerendered}
+  />
 
   <section id="pieces">
     <h2>Pieces</h2>
 
     <div class="flex flex-wrap gap-3">
-      {#each data.gallery.pieces as piece}
+      {#each gallery.pieces as piece}
         <Card>
           {#snippet title()}
             <Anchor href={resolve("/s/piece/[slug]", piece)}>
@@ -81,11 +73,13 @@
             {@const [image] = piece.images}
 
             {#if image}
-              <Picture
-                {image}
-                width={100}
-                height={100}
-              />
+              <a href={resolve("/s/piece/[slug]", piece)}>
+                <Picture
+                  {image}
+                  width={200}
+                  height={200}
+                />
+              </a>
             {/if}
           {/snippet}
         </Card>

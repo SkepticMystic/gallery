@@ -3,6 +3,7 @@
   import Picture from "$lib/components/image/Picture.svelte";
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
+  import Card from "$lib/components/ui/card/Card.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
@@ -26,8 +27,8 @@
       | "height_cm"
       | "depth_cm"
     > & {
-      images: Pick<Image, "url" | "thumbhash">[];
       gallery: Pick<Gallery, "name" | "slug">;
+      images: Pick<Image, "url" | "thumbhash" | "width" | "height">[];
     };
 
     prerendered: {
@@ -46,17 +47,29 @@
       title="Open in a new tab"
       href={primary_image.url}
     >
-      <Picture image={primary_image} />
+      <Picture
+        class="max-w-fit"
+        image={primary_image}
+      />
+      <!-- width={primary_image.width}
+        height={primary_image.height} -->
     </a>
 
     {#if rest_images.length}
       <div class="flex flex-wrap gap-2">
         {#each rest_images as image (image.url)}
-          <Picture
-            {image}
-            width={100}
-            height={100}
-          />
+          <a
+            target="_blank"
+            class="cursor-zoom-in"
+            title="Open in a new tab"
+            href={image.url}
+          >
+            <Picture
+              {image}
+              width={200}
+              height={200}
+            />
+          </a>
         {/each}
       </div>
     {/if}
@@ -64,37 +77,43 @@
 {/if}
 
 <section id="info">
-  <p class="text-xl font-medium">
-    {Format.currency(piece.price)}
-  </p>
+  <Card title="Info">
+    {#snippet content()}
+      <p class="text-xl font-medium">
+        {Format.currency(piece.price)}
+      </p>
 
-  <p>
-    <Icon icon="lucide/brush" />
-    {piece.medium}
-  </p>
+      <p>
+        <Icon icon="lucide/brush" />
+        {piece.medium}
+      </p>
 
-  <p>
-    <Icon icon="lucide/ruler-dimension-line" />
-    {PieceUtil.format_dimensions(piece)}
-  </p>
+      <p>
+        <Icon icon="lucide/ruler-dimension-line" />
+        {PieceUtil.format_dimensions(piece)}
+      </p>
 
-  {#if piece.weight_kg || true}
-    <p>
-      <Icon icon="lucide/weight" />
-      {Format.number(piece.weight_kg, {
-        style: "unit",
-        unit: "kilogram",
-        unitDisplay: "short",
-      })}
-    </p>
-  {/if}
+      {#if piece.weight_kg}
+        <p>
+          <Icon icon="lucide/weight" />
+          {Format.number(piece.weight_kg, {
+            style: "unit",
+            unit: "kilogram",
+            unitDisplay: "short",
+          })}
+        </p>
+      {/if}
+    {/snippet}
 
-  <Anchor
-    icon="lucide/building"
-    href={resolve("/s/gallery/[slug]", piece.gallery)}
-  >
-    {piece.gallery.name}
-  </Anchor>
+    {#snippet footer()}
+      <Anchor
+        icon="lucide/building"
+        href={resolve("/s/gallery/[slug]", piece.gallery)}
+      >
+        {piece.gallery.name}
+      </Anchor>
+    {/snippet}
+  </Card>
 </section>
 
 {#if prerendered.description}

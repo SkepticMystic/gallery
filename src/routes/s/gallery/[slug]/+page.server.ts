@@ -3,6 +3,8 @@ import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
 import { get_session } from "$lib/services/auth.service";
+import { Markdown } from "$lib/utils/markdown/markdown.util";
+import { SEOUtil } from "$lib/utils/seo/seo.util";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
@@ -17,7 +19,13 @@ export const load = (async ({ params }) => {
         with: {
           images: {
             limit: IMAGE_HOSTING.LIMITS.MAX_COUNT.PER_RESOURCE,
-            columns: { id: true, url: true, thumbhash: true },
+            columns: {
+              id: true,
+              url: true,
+              width: true,
+              height: true,
+              thumbhash: true,
+            },
           },
 
           pieces: {
@@ -32,7 +40,13 @@ export const load = (async ({ params }) => {
             with: {
               images: {
                 limit: 1,
-                columns: { id: true, url: true, thumbhash: true },
+                columns: {
+                  id: true,
+                  url: true,
+                  width: true,
+                  height: true,
+                  thumbhash: true,
+                },
               },
             },
           },
@@ -49,7 +63,16 @@ export const load = (async ({ params }) => {
     error(404, ERROR.NOT_FOUND);
   }
 
+  const prerendered = {
+    description: gallery.data.description
+      ? Markdown.to_html(gallery.data.description)
+      : null,
+  };
+
   return {
+    prerendered,
     gallery: gallery.data,
+
+    seo: SEOUtil.from_resource(gallery.data),
   };
 }) satisfies PageServerLoad;
