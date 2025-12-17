@@ -26,6 +26,7 @@
       | "width_cm"
       | "height_cm"
       | "depth_cm"
+      | "updatedAt"
     > & {
       gallery: Pick<Gallery, "name" | "slug">;
       images: Pick<Image, "url" | "thumbhash" | "width" | "height">[];
@@ -121,3 +122,9 @@
     <PrerenderedMarkdown html={prerendered.description} />
   </section>
 {/if}
+
+<footer id="meta">
+  <p class="text-sm text-muted-foreground">
+    Last updated: {piece.updatedAt.toLocaleString()}
+  </p>
+</footer>
