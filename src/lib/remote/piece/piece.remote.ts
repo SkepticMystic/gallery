@@ -1,5 +1,6 @@
 import { resolve } from "$app/paths";
 import { command, form, query } from "$app/server";
+import { query_schema } from "$lib/schema/query/query.schema";
 import { db } from "$lib/server/db/drizzle.db";
 import { PieceSchema, PieceTable } from "$lib/server/db/models/piece.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
@@ -93,5 +94,54 @@ export const delete_piece_by_id_remote = command(
         )
         .execute(),
     );
+  },
+);
+
+const piece_query_schema = query_schema(
+  z.object({
+    name: z.string().optional(),
+    gallery_id: z.uuid().array().optional(),
+  }),
+);
+
+export const search_published_pieces_remote = query(
+  piece_query_schema,
+  async (input) => {
+    const pieces = await Repo.query(
+      db.query.piece.findMany({
+        limit: input.limit,
+        offset: input.offset,
+
+        where: (piece, { eq, and, ilike, inArray }) =>
+          and(
+            eq(piece.is_published, true),
+
+            input.where.name //
+              ? ilike(piece.name, input.where.name)
+              : undefined,
+            input.where.gallery_id
+              ? inArray(piece.gallery_id, input.where.gallery_id)
+              : undefined,
+          ),
+
+        columns: {
+          id: true,
+          name: true,
+          slug: true,
+          price: true,
+          medium: true,
+          gallery_id: true,
+          year_created: true,
+        },
+
+        with: {
+          images: {
+            columns: { url: true, thumbhash: true },
+          },
+        },
+      }),
+    );
+
+    return pieces;
   },
 );

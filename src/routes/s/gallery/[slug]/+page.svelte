@@ -1,14 +1,11 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import GalleryViewer from "$lib/components/blocks/gallery/GalleryViewer.svelte";
-  import Picture from "$lib/components/image/Picture.svelte";
-  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
+  import PieceCard from "$lib/components/blocks/piece/PieceCard.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-  import Card from "$lib/components/ui/card/Card.svelte";
   import Empty from "$lib/components/ui/empty/empty.svelte";
   import { App } from "$lib/utils/app.js";
-  import { Format } from "$lib/utils/format.util";
 
   let { data } = $props();
   const gallery = $state(data.gallery);
@@ -52,37 +49,7 @@
 
     <div class="flex flex-wrap gap-3">
       {#each gallery.pieces as piece}
-        <Card>
-          {#snippet title()}
-            <Anchor href={resolve("/s/piece/[slug]", piece)}>
-              {piece.name}
-            </Anchor>
-          {/snippet}
-
-          {#snippet description()}
-            <span>
-              {piece.medium}
-            </span>
-
-            <span>
-              {Format.currency(piece.price)}
-            </span>
-          {/snippet}
-
-          {#snippet content()}
-            {@const [image] = piece.images}
-
-            {#if image}
-              <a href={resolve("/s/piece/[slug]", piece)}>
-                <Picture
-                  {image}
-                  width={200}
-                  height={200}
-                />
-              </a>
-            {/if}
-          {/snippet}
-        </Card>
+        <PieceCard {piece} />
       {:else}
         <Empty
           icon="lucide/frame"
