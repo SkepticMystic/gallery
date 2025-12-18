@@ -5,6 +5,7 @@ import * as AuthModels from "./models/auth.model";
 import * as GalleryModel from "./models/gallery.model";
 import * as ImageModel from "./models/image.model";
 import * as PieceModel from "./models/piece.model";
+import * as SubscriptionModel from "./models/subscription.model";
 
 const client = neon(DATABASE_URL);
 
@@ -20,6 +21,8 @@ const {
   TwoFactorTable,
   ...auth_rest
 } = AuthModels;
+
+const { SubscriptionTable, ...subscription_rest } = SubscriptionModel;
 
 const { ImageTable, ...image_rest } = ImageModel;
 
@@ -41,6 +44,10 @@ export const db = drizzle(client, {
     passkey: PasskeyTable,
     twoFactor: TwoFactorTable,
     ...auth_rest,
+
+    // Subscription
+    subscription: SubscriptionTable,
+    ...subscription_rest,
 
     // Image
     image: ImageTable,

@@ -1,3 +1,4 @@
+import { paystackClient } from "@alexasomba/better-auth-paystack/client";
 import { passkeyClient } from "@better-auth/passkey/client";
 import {
   adminClient,
@@ -20,6 +21,9 @@ export const BetterAuthClient = createAuthClient({
     adminClient({
       ac: AccessControl.ac,
       roles: AccessControl.roles,
+    }),
+    paystackClient({
+      subscription: true,
     }),
   ],
 

@@ -3,10 +3,9 @@ import {
   BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  POCKETID_BASE_URL,
-  POCKETID_CLIENT_ID,
-  POCKETID_CLIENT_SECRET,
+  PAYSTACK_WEBHOOK_SECRET,
 } from "$env/static/private";
+import { paystack } from "@alexasomba/better-auth-paystack";
 import { passkey } from "@better-auth/passkey";
 import type { APIError } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -14,12 +13,10 @@ import { generateRandomString } from "better-auth/crypto";
 import { betterAuth } from "better-auth/minimal";
 import {
   admin,
-  genericOAuth,
   haveIBeenPwned,
   lastLoginMethod,
   organization,
   twoFactor,
-  type GenericOAuthConfig,
 } from "better-auth/plugins";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { APP } from "./const/app.const";
@@ -27,6 +24,7 @@ import { AccessControl } from "./const/auth/access_control.const";
 import { AUTH, type IAuth } from "./const/auth/auth.const";
 import { TWO_FACTOR } from "./const/auth/two_factor.const";
 import { EMAIL } from "./const/email.const";
+import { PaystackSDK } from "./sdk/payment/paystack/paystack.payment.sdk";
 import { db } from "./server/db/drizzle.db";
 import {
   AccountTable,
@@ -268,50 +266,38 @@ export const auth = betterAuth({
       },
     }),
 
-    genericOAuth({
-      config: [
-        POCKETID_CLIENT_ID && POCKETID_CLIENT_SECRET && POCKETID_BASE_URL
-          ? ((): GenericOAuthConfig => {
-              const providerId = "pocket-id" satisfies IAuth.ProviderId;
+    paystack({
+      paystackClient: PaystackSDK,
+      paystackWebhookSecret: PAYSTACK_WEBHOOK_SECRET,
+      createCustomerOnSignUp: true,
 
-              return {
-                providerId,
-                clientId: POCKETID_CLIENT_ID,
-                clientSecret: POCKETID_CLIENT_SECRET,
+      subscription: {
+        enabled: true,
+        requireEmailVerification: true,
+        plans: [],
 
-                discoveryUrl:
-                  POCKETID_BASE_URL + "/.well-known/openid-configuration",
-                // ... other config options
+        authorizeReference: async (
+          { action, session, user, referenceId },
+          ctx,
+        ) => {
+          const member = await Repo.query(
+            db.query.member.findFirst({
+              columns: { role: true },
+              where: (member, { eq, and }) =>
+                and(
+                  eq(member.userId, user.id),
+                  eq(member.organizationId, referenceId),
+                ),
+            }),
+          );
 
-                mapProfileToUser: (profile: unknown) => {
-                  Log.info(profile, providerId + " profile");
-
-                  // NOTE: Typing profile directly in the callback arg gives a TS error, since better-auth expects Record<string, any>
-                  const typed = profile as IAuth.GenericOAuthProfile;
-
-                  const name = (
-                    typed.name ||
-                    (typed.given_name || "") +
-                      " " +
-                      (typed.family_name || "") ||
-                    ""
-                  )
-                    .trim()
-                    .replaceAll(/\s+/g, " ");
-
-                  return {
-                    name,
-                    email: typed.email,
-                    image: typed.picture,
-                    emailVerified:
-                      AUTH.PROVIDERS.MAP[providerId].force_email_verified ||
-                      typed.email_verified,
-                  };
-                },
-              };
-            })()
-          : null,
-      ].flatMap((cfg) => (cfg ? [cfg] : [])),
+          if (!member.ok || !member.data) {
+            return false;
+          } else {
+            return member.data.role === "owner" || member.data.role === "admin";
+          }
+        },
+      },
     }),
 
     // NOTE: Must be last, as it needs the request event

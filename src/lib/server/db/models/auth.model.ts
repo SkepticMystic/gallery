@@ -36,6 +36,8 @@ export const UserTable = pgTable("user", {
 
   twoFactorEnabled: boolean().default(false).notNull(),
 
+  paystackCustomerCode: varchar({ length: 255 }),
+
   ...Schema.timestamps,
 });
 
