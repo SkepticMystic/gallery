@@ -210,11 +210,15 @@ body {
 }
 
 article {
-  @apply mx-auto space-y-5 sm:container;
+  @apply mx-auto space-y-7 sm:container;
 }
 
 section {
-  @apply space-y-3;
+  @apply space-y-5;
+}
+
+aside {
+  @apply space-y-5;
 }
 
 h1 {
@@ -247,7 +251,7 @@ button.btn-loading > .icon:not(:first-child) {
 }
 
 .prose {
-  @apply prose-neutral max-w-none;
+  @apply max-w-none prose-neutral;
 }
 
 .dark .prose {

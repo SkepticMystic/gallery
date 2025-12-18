@@ -1,6 +1,6 @@
 import { resolve } from "$app/paths";
 import { command, form, query } from "$app/server";
-import { query_schema } from "$lib/schema/query/query.schema";
+import { query_schema, where_schema } from "$lib/schema/query/query.schema";
 import { db } from "$lib/server/db/drizzle.db";
 import { PieceSchema, PieceTable } from "$lib/server/db/models/piece.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
@@ -99,8 +99,9 @@ export const delete_piece_by_id_remote = command(
 
 const piece_query_schema = query_schema(
   z.object({
-    name: z.string().optional(),
-    gallery_id: z.uuid().array().optional(),
+    name: z.object(where_schema.ilike()).optional(),
+    id: z.object(where_schema.nin(z.uuid())).optional(),
+    gallery_id: z.object(where_schema.in(z.uuid())).optional(),
   }),
 );
 
@@ -112,15 +113,18 @@ export const search_published_pieces_remote = query(
         limit: input.limit,
         offset: input.offset,
 
-        where: (piece, { eq, and, ilike, inArray }) =>
+        where: (piece, { eq, and, ilike, inArray, notInArray }) =>
           and(
             eq(piece.is_published, true),
 
-            input.where.name //
-              ? ilike(piece.name, input.where.name)
+            input.where.id?.nin //
+              ? notInArray(piece.id, input.where.id.nin)
               : undefined,
-            input.where.gallery_id
-              ? inArray(piece.gallery_id, input.where.gallery_id)
+            input.where.name?.ilike //
+              ? ilike(piece.name, input.where.name.ilike)
+              : undefined,
+            input.where.gallery_id?.in
+              ? inArray(piece.gallery_id, input.where.gallery_id.in)
               : undefined,
           ),
 

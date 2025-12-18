@@ -18,7 +18,10 @@
   const related_pieces = $derived(
     search_published_pieces_remote({
       limit: 5,
-      where: { gallery_id: [piece.gallery_id] },
+      where: {
+        id: { nin: [piece.id] },
+        gallery_id: { in: [piece.gallery_id] },
+      },
     }),
   );
 </script>
@@ -49,8 +52,14 @@
   />
 </article>
 
-<aside id="related">
-  <h2>Related Pieces</h2>
+<aside
+  id="related"
+  class="mt-7"
+>
+  <div>
+    <h2>Related Pieces</h2>
+    <p class="text-muted-foreground">Other pieces from the same gallery</p>
+  </div>
 
   <svelte:boundary>
     {#snippet pending()}
