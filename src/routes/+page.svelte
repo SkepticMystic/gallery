@@ -15,23 +15,12 @@
         <Button href="/gallery">Browse Galleries</Button>
       </ButtonGroup>
 
-      </ButtonGroup>
-
       <ButtonGroup>
         <Button
-          href="/profile"
-          variant="outline"
+          href="/s/gallery"
+          variant="secondary"
         >
-          Profile
-        </Button>
-      </ButtonGroup>
-
-      <ButtonGroup>
-        <Button
-          href="/organization"
-          variant="outline"
-        >
-          Team
+          My Galleries
         </Button>
       </ButtonGroup>
     </ButtonGroup>

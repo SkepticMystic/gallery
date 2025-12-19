@@ -156,7 +156,11 @@
 
 {#if prerendered.description}
   <section id="description">
-    <PrerenderedMarkdown html={prerendered.description} />
+    <Card title="Description">
+      {#snippet content()}
+        <PrerenderedMarkdown html={prerendered.description} />
+      {/snippet}
+    </Card>
   </section>
 {/if}
 

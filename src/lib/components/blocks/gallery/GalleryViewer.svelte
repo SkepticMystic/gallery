@@ -3,6 +3,7 @@
   import GoogleMapIFrame from "$lib/components/map/GoogleMapIFrame.svelte";
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
+  import Card from "$lib/components/ui/card/Card.svelte";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { IHTML } from "$lib/utils/html/html.util";
@@ -112,6 +113,12 @@
 {#if prerendered.description}
   <section id="description">
     <h2 class="sr-only">Description</h2>
+
+    <Card title="Description">
+      {#snippet content()}
+        <PrerenderedMarkdown html={prerendered.description} />
+      {/snippet}
+    </Card>
   </section>
 {/if}
 

@@ -56,6 +56,8 @@
       }
     }
   });
+
+  $inspect("artist_name", form.fields.artist_name.value());
 </script>
 
 <form
