@@ -14,8 +14,11 @@ import { Schema } from "./index.schema";
 export const SubscriptionTable = pgTable("subscription", {
   ...Schema.id(),
 
-  seats: integer(),
   plan: text().notNull(),
+  status: text().notNull().default("incomplete"),
+
+  seats: integer(),
+  groupId: varchar({ length: 255 }),
 
   referenceId: varchar({ length: 255 })
     .references(() => OrganizationTable.id, { onDelete: "cascade" })
@@ -27,9 +30,6 @@ export const SubscriptionTable = pgTable("subscription", {
     () => UserTable.paystackCustomerCode,
     { onDelete: "cascade" },
   ),
-
-  groupId: varchar({ length: 255 }),
-  status: text().notNull().default("incomplete"),
 
   trialStart: timestamp({ mode: "date" }),
   trialEnd: timestamp({ mode: "date" }),

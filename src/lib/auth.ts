@@ -24,6 +24,7 @@ import { AccessControl } from "./const/auth/access_control.const";
 import { AUTH, type IAuth } from "./const/auth/auth.const";
 import { TWO_FACTOR } from "./const/auth/two_factor.const";
 import { EMAIL } from "./const/email.const";
+import { PAYSTACK } from "./const/payment/paystack/paystack.payment.const";
 import { PaystackSDK } from "./sdk/payment/paystack/paystack.payment.sdk";
 import { db } from "./server/db/drizzle.db";
 import {
@@ -273,17 +274,8 @@ export const auth = betterAuth({
 
       subscription: {
         enabled: true,
+        plans: PAYSTACK.PLANS.LIST,
         requireEmailVerification: true,
-        plans: [
-          {
-            name: "Starter",
-            interval: "monthly",
-            planCode: "PLN_912yjmwpzgdzzy2",
-            freeTrial: {
-              days: 14,
-            },
-          },
-        ],
 
         authorizeReference: async (
           { action, session, user, referenceId },

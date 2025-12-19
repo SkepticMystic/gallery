@@ -11,7 +11,7 @@
     children,
     ...rest
   }: {
-    form: RemoteForm<Input, Output>;
+    form: Omit<RemoteForm<Input, Output>, "for">;
   } & Omit<ComponentProps<typeof Button>, "form" | "target" | "href"> =
     $props();
 </script>

@@ -1,4 +1,4 @@
 import { PAYSTACK_SECRET_KEY } from "$env/static/private";
-import SDK from "paystack-sdk";
+import { Paystack } from "paystack-sdk";
 
-export const PaystackSDK = new SDK(PAYSTACK_SECRET_KEY);
+export const PaystackSDK = new Paystack(PAYSTACK_SECRET_KEY);
