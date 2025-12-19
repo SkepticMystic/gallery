@@ -1,6 +1,7 @@
 import { DATABASE_URL } from "$env/static/private";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+import * as ArtistModel from "./models/artist.model";
 import * as AuthModels from "./models/auth.model";
 import * as GalleryModel from "./models/gallery.model";
 import * as ImageModel from "./models/image.model";
@@ -26,6 +27,8 @@ const { ImageTable, ...image_rest } = ImageModel;
 const { GalleryTable, ...gallery_rest } = GalleryModel;
 
 const { PieceTable, ...piece_rest } = PieceModel;
+
+const { ArtistTable, ...artist_rest } = ArtistModel;
 
 export const db = drizzle(client, {
   casing: "snake_case",
@@ -53,5 +56,9 @@ export const db = drizzle(client, {
     // Piece
     piece: PieceTable,
     ...piece_rest,
+
+    // Artist
+    artist: ArtistTable,
+    ...artist_rest,
   },
 });

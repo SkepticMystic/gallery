@@ -66,6 +66,12 @@
 
       if (res.every((r) => r.ok)) {
         form.fields.files.set([]);
+      } else {
+        for (const r of res) {
+          if (r.ok === false) {
+            toast.error(r.error.message);
+          }
+        }
       }
     }
   })}

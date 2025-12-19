@@ -6,14 +6,14 @@ import {
   GalleryTable,
 } from "$lib/server/db/models/gallery.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import { get_session } from "$lib/services/auth.service";
+import { get_seller_session } from "$lib/services/auth.service";
 import { GalleryService } from "$lib/services/gallery/gallery.service";
 import { invalid, redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 
 export const list_my_galleries_remote = query(async () => {
-  const { session } = await get_session();
+  const { session } = await get_seller_session();
 
   const galleries = await Repo.query(
     db.query.gallery.findMany({
@@ -31,7 +31,7 @@ export const upsert_gallery_remote = form(
   async (input) => {
     console.log("upsert_gallery_remote.input", input);
 
-    const { session } = await get_session();
+    const { session } = await get_seller_session();
 
     const res = input.id
       ? await GalleryService.update_one(
@@ -60,7 +60,7 @@ export const upsert_gallery_remote = form(
 export const delete_gallery_by_id_remote = command(
   z.uuid(), //
   async (gallery_id) => {
-    const { session } = await get_session();
+    const { session } = await get_seller_session();
 
     return await Repo.delete_one(
       db

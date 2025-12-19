@@ -16,7 +16,11 @@ const insert_one = async (
   try {
     const slug = Strings.slugify(input.name);
     if (SLUG.RESTRICTED.includes(slug)) {
-      return result.err({ ...ERROR.INVALID_SLUG, path: ["name"] });
+      return result.err({
+        ...ERROR.INVALID_INPUT,
+        path: ["name"],
+        message: "Invalid name",
+      });
     }
 
     const res = await GalleryRepo.insert_one({

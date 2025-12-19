@@ -12,13 +12,15 @@
   <div class="my-14">
     <ButtonGroup>
       <ButtonGroup>
-        <Button href="/gallery">Galleries</Button>
+        <Button href="/gallery">Browse Galleries</Button>
+      </ButtonGroup>
+
       </ButtonGroup>
 
       <ButtonGroup>
         <Button
           href="/profile"
-          variant="secondary"
+          variant="outline"
         >
           Profile
         </Button>

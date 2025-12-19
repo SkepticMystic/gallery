@@ -43,11 +43,6 @@ export const get_session = async (options?: Options) => {
       },
       event,
     );
-  } else if (
-    !session.session.member_id ||
-    !session.session.activeOrganizationId
-  ) {
-    error(401, "Unauthorized");
   } else if (resolved.email_verified && !session.user.emailVerified) {
     redirect(
       302,
@@ -71,11 +66,26 @@ export const get_session = async (options?: Options) => {
     }
   }
 
+  return session;
+};
+
+export const get_seller_session = async (options?: Options) => {
+  const session = await get_session(options);
+
+  if (
+    !session.session.member_id ||
+    // !session.session.member_role ||
+    !session.session.activeOrganizationId
+  ) {
+    error(401, "Unauthorized");
+  }
+
   return {
     user: session.user,
     session: {
       ...session.session,
       member_id: session.session.member_id!,
+      // member_role: session.session.member_role!,
       org_id: session.session.activeOrganizationId!,
     },
   };

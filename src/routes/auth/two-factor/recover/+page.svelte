@@ -14,7 +14,7 @@
     {#snippet content()}
       <VerifyTwoFactorBackupCodeForm
         on_success={() => {
-          goto(resolve("/profile"));
+          goto(resolve("/account"));
         }}
       />
     {/snippet}

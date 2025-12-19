@@ -8,10 +8,10 @@ declare global {
     }
 
     interface Error {
-      code?: string;
       message: string;
       status?: number;
       level?: "error" | "warning";
+      code?: import("$lib/const/error.const").AppErrorCode;
       // Comes from StandardSchema.Issue.path
       path?: readonly (PropertyKey | { key: PropertyKey })[];
     }

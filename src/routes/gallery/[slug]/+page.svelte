@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
   import GalleryViewer from "$lib/components/blocks/gallery/GalleryViewer.svelte";
   import PieceCard from "$lib/components/blocks/piece/PieceCard.svelte";
+  import ShareButton from "$lib/components/buttons/ShareButton.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
-  import Button from "$lib/components/ui/button/button.svelte";
   import CardList from "$lib/components/ui/card/CardList.svelte";
-  import { App } from "$lib/utils/app.js";
+  import { GalleryUtil } from "$lib/utils/gallery/gallery.util.js";
 
   let { data } = $props();
   const gallery = $state(data.gallery);
@@ -16,22 +15,7 @@
     <h1>{gallery.name}</h1>
 
     <ButtonGroup>
-      <ButtonGroup>
-        <Button
-          icon="lucide/pencil"
-          href={resolve("/s/gallery/[slug]/edit", gallery)}
-        >
-          Edit
-        </Button>
-      </ButtonGroup>
-      <ButtonGroup>
-        <Button
-          icon="lucide/frame"
-          href={App.url("/s/piece/create", { gallery_id: gallery.id })}
-        >
-          Add Piece
-        </Button>
-      </ButtonGroup>
+      <ShareButton data={GalleryUtil.share_data(gallery)} />
     </ButtonGroup>
   </header>
 

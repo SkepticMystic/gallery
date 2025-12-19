@@ -34,8 +34,8 @@
     },
     {
       side: "right",
-      label: "Profile",
-      href: "/profile",
+      label: "Account",
+      href: "/account",
       icon: "lucide/user",
       authed: true,
     },

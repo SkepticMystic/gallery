@@ -4,24 +4,32 @@ import { query_schema, where_schema } from "$lib/schema/query/query.schema";
 import { db } from "$lib/server/db/drizzle.db";
 import { PieceSchema, PieceTable } from "$lib/server/db/models/piece.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import { get_session } from "$lib/services/auth.service";
+import { get_seller_session } from "$lib/services/auth.service";
 import { PieceService } from "$lib/services/piece/piece.service";
 import { error, invalid, redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 
 export const list_my_pieces_remote = query(async () => {
-  const { session } = await get_session();
+  const { session } = await get_seller_session();
 
   const pieces = await Repo.query(
     db.query.piece.findMany({
       where: (piece, { eq }) => eq(piece.org_id, session.org_id),
 
-      columns: { id: true, name: true, slug: true },
+      columns: {
+        id: true,
+        name: true,
+        slug: true,
+      },
 
       with: {
         images: {
-          columns: { id: true, url: true, thumbhash: true },
+          columns: {
+            id: true,
+            url: true,
+            thumbhash: true,
+          },
         },
       },
     }),
@@ -36,7 +44,7 @@ export const upsert_piece_remote = form(
     console.log("upsert_piece_remote.input", input);
 
     const [{ session }, gallery] = await Promise.all([
-      get_session(),
+      get_seller_session(),
 
       Repo.query(
         db.query.gallery.findFirst({
@@ -54,15 +62,9 @@ export const upsert_piece_remote = form(
       error(401, "Unauthorized");
     }
 
-    const res = input.id
-      ? await PieceService.update_one(
-          { id: input.id, org_id: session.org_id },
-          input,
-        )
-      : await PieceService.insert_one({
-          ...input,
-          org_id: session.org_id,
-        });
+    const res = await (input.id
+      ? PieceService.update_one({ id: input.id, org_id: session.org_id }, input)
+      : PieceService.insert_one({ ...input, org_id: session.org_id }));
 
     console.log("upsert_piece_remote.res", res);
 
@@ -81,7 +83,7 @@ export const upsert_piece_remote = form(
 export const delete_piece_by_id_remote = command(
   z.uuid(), //
   async (piece_id) => {
-    const { session } = await get_session();
+    const { session } = await get_seller_session();
 
     return await Repo.delete_one(
       db
@@ -121,7 +123,7 @@ export const search_published_pieces_remote = query(
               ? notInArray(piece.id, input.where.id.nin)
               : undefined,
             input.where.name?.ilike //
-              ? ilike(piece.name, input.where.name.ilike)
+              ? ilike(piece.name, "%" + input.where.name.ilike + "%")
               : undefined,
             input.where.gallery_id?.in
               ? inArray(piece.gallery_id, input.where.gallery_id.in)

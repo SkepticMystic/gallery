@@ -10,7 +10,6 @@
   import { format_bytes } from "$lib/components/ui/file-drop-zone/index.js";
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import { Items } from "$lib/utils/items.util.js";
-  import { toast } from "svelte-sonner";
 
   let { data } = $props();
 
@@ -33,15 +32,8 @@
     <UploadImagesForm
       resource_kind="piece"
       resource_id={piece.id}
-      after_upload={(results) => {
-        for (const r of results) {
-          if (r.ok) {
-            piece.images.push(r.data);
-          } else {
-            toast.error(r.error.message);
-          }
-        }
-      }}
+      after_upload={(results) =>
+        results.forEach((r) => (r.ok ? piece.images.push(r.data) : void 0))}
     />
 
     <Separator />

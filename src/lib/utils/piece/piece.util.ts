@@ -5,10 +5,13 @@ import { App } from "../app";
 export const PieceUtil = {
   format_dimensions: (
     piece: Pick<Piece, "width_cm" | "height_cm" | "depth_cm">,
-  ) =>
-    [piece.width_cm, piece.height_cm, piece.depth_cm]
+  ) => {
+    const s = [piece.width_cm, piece.height_cm, piece.depth_cm]
       .filter(Boolean)
-      .join(" x ") + " cm",
+      .join(" x ");
+
+    return s ? s + " cm" : "";
+  },
 
   share_data: (piece: Pick<Piece, "name" | "slug">): ShareData => ({
     title: piece.name,

@@ -2,15 +2,15 @@ import { ERROR } from "$lib/const/error.const";
 import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import { get_session } from "$lib/services/auth.service";
+import { get_seller_session } from "$lib/services/auth.service";
 import { Markdown } from "$lib/utils/markdown/markdown.util";
 import { SEOUtil } from "$lib/utils/seo/seo.util";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params }) => {
-  const [user, gallery] = await Promise.all([
-    get_session(),
+  const [{ session }, gallery] = await Promise.all([
+    get_seller_session(),
 
     Repo.query(
       db.query.gallery.findFirst({
@@ -31,6 +31,7 @@ export const load = (async ({ params }) => {
           pieces: {
             limit: 5,
             columns: {
+              id: true,
               name: true,
               slug: true,
               medium: true,
@@ -55,11 +56,7 @@ export const load = (async ({ params }) => {
     ),
   ]);
 
-  if (
-    !gallery.ok ||
-    !gallery.data ||
-    gallery.data.org_id !== user.session.org_id
-  ) {
+  if (!gallery.ok || !gallery.data || gallery.data.org_id !== session.org_id) {
     error(404, ERROR.NOT_FOUND);
   }
 

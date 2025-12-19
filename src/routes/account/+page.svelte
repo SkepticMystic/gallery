@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { dev } from "$app/environment";
   import { PasskeyClient } from "$lib/clients/auth/passkey.client.js";
   import { UserClient } from "$lib/clients/auth/user.client";
   import ChangePasswordForm from "$lib/components/auth/accounts/ChangePasswordForm.svelte";
@@ -25,7 +24,7 @@
 
 <article>
   <header>
-    <h1>Profile</h1>
+    <h1>My Account</h1>
   </header>
 
   <section class="flex items-center gap-3">
@@ -36,19 +35,14 @@
 
     <div>
       {#if user.name}
-        <p>
-          <strong>{user.name}</strong>
-        </p>
+        <p class="font-semibold">{user.name}</p>
       {/if}
       <p>{user.email}</p>
-      {#if dev}
-        <code>{user.id}</code>
-      {/if}
     </div>
   </section>
 
   <section>
-    <h2>Accounts</h2>
+    <h2>Login Methods</h2>
     <UserAccountsList />
   </section>
 

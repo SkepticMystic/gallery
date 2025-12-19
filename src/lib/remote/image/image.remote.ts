@@ -2,7 +2,7 @@ import { command, form } from "$app/server";
 import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import z from "zod";
 import { ImageSchema } from "../../server/db/models/image.model";
-import { get_session } from "../../services/auth.service";
+import { get_seller_session, get_session } from "../../services/auth.service";
 import { ImageService } from "../../services/image/image.service";
 
 export const upload_images_remote = form(
@@ -14,7 +14,7 @@ export const upload_images_remote = form(
   }),
   async (input) => {
     console.log("upload_images_remote", input);
-    const { session } = await get_session();
+    const { session } = await get_seller_session();
 
     return await Promise.all(
       input.files.map((file) =>
@@ -31,7 +31,7 @@ export const upload_images_remote = form(
 export const delete_image_remote = command(
   z.uuid(),
   async (image_id: string) => {
-    const { session } = await get_session();
+    const { session } = await get_seller_session();
 
     return await ImageService.delete_many({
       id: image_id,

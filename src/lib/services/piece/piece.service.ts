@@ -6,6 +6,7 @@ import { Log } from "$lib/utils/logger.util";
 import { result } from "$lib/utils/result.util";
 import { Strings } from "$lib/utils/strings.util";
 import { captureException } from "@sentry/sveltekit";
+import { ArtistService } from "../artist/artist.service";
 
 const insert_one = async (
   input: Omit<typeof PieceTable.$inferInsert, "slug">,
@@ -15,13 +16,26 @@ const insert_one = async (
       Strings.slugify(input.name) + "-" + crypto.randomUUID().slice(0, 6);
 
     if (SLUG.RESTRICTED.includes(slug)) {
-      return result.err({ ...ERROR.INVALID_SLUG, path: ["name"] });
+      return result.err({
+        ...ERROR.INVALID_INPUT,
+        path: ["name"],
+        message: "Invalid name",
+      });
     }
 
-    const res = await PieceRepo.insert_one({
-      ...input,
-      slug,
-    });
+    const [res] = await Promise.all([
+      PieceRepo.insert_one({
+        ...input,
+        slug,
+      }),
+
+      input.artist_name
+        ? ArtistService.insert_one({
+            name: input.artist_name,
+            created_by_org_id: input.org_id,
+          })
+        : undefined,
+    ]);
 
     return res;
   } catch (error) {
@@ -38,7 +52,16 @@ const update_one = async (
   update: Partial<typeof PieceTable.$inferInsert>,
 ): Promise<App.Result<Piece>> => {
   try {
-    const res = await PieceRepo.update_one(find, update);
+    const [res] = await Promise.all([
+      PieceRepo.update_one(find, update),
+
+      update.artist_name
+        ? ArtistService.insert_one({
+            name: update.artist_name,
+            created_by_org_id: find.org_id,
+          })
+        : undefined,
+    ]);
 
     return res;
   } catch (error) {

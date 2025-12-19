@@ -46,9 +46,17 @@ const safe = (url: string | URL) => {
   }
 };
 
+const format = (href: string) => {
+  const url = safe(href);
+  if (!url) return href;
+
+  return url.host.split("www.").at(-1) || url.host;
+};
+
 export const Url = {
   safe,
   build,
+  format,
   add_search,
 
   strip_origin: (url: URL) => url.pathname + url.search + url.hash,

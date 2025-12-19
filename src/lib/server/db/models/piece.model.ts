@@ -30,6 +30,8 @@ export const PieceTable = pgTable(
       .notNull()
       .references(() => GalleryTable.id, { onDelete: "cascade" }),
 
+    artist_name: varchar({ length: 255 }).notNull().default(""),
+
     is_published: boolean().default(false).notNull(),
 
     name: varchar({ length: 255 }).notNull(),
@@ -75,6 +77,7 @@ export type Piece = typeof PieceTable.$inferSelect;
 
 const pick = {
   gallery_id: true,
+  artist_name: true,
   is_published: true,
 
   name: true,

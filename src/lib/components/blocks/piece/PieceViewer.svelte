@@ -5,6 +5,7 @@
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
+  import { get_artist_by_name_remote } from "$lib/remote/artist/artist.remote";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { Piece } from "$lib/server/db/models/piece.model";
@@ -27,6 +28,7 @@
       | "height_cm"
       | "depth_cm"
       | "updatedAt"
+      | "artist_name"
     > & {
       gallery: Pick<Gallery, "name" | "slug">;
       images: Pick<Image, "url" | "thumbhash" | "width" | "height">[];
@@ -37,6 +39,7 @@
     };
   } = $props();
 
+  const dimensions = $derived(PieceUtil.format_dimensions(piece));
   const [primary_image, ...rest_images] = $derived(piece.images);
 </script>
 
@@ -49,6 +52,7 @@
       href={primary_image.url}
     >
       <Picture
+        prioritize
         class="max-w-fit"
         image={primary_image}
       />
@@ -81,7 +85,7 @@
   <Card title="Info">
     {#snippet content()}
       <p class="text-xl font-medium">
-        {Format.currency(piece.price)}
+        {piece.price ? Format.currency(piece.price) : "No price"}
       </p>
 
       <p>
@@ -89,10 +93,12 @@
         {piece.medium}
       </p>
 
-      <p>
-        <Icon icon="lucide/ruler-dimension-line" />
-        {PieceUtil.format_dimensions(piece)}
-      </p>
+      {#if dimensions}
+        <p>
+          <Icon icon="lucide/ruler-dimension-line" />
+          {dimensions}
+        </p>
+      {/if}
 
       {#if piece.weight_kg}
         <p>
@@ -107,12 +113,43 @@
     {/snippet}
 
     {#snippet footer()}
-      <Anchor
-        icon="lucide/building"
-        href={resolve("/s/gallery/[slug]", piece.gallery)}
-      >
-        {piece.gallery.name}
-      </Anchor>
+      <div class="flex flex-col gap-1">
+        <p>
+          <Anchor
+            icon="lucide/building"
+            href={resolve("/s/gallery/[slug]", piece.gallery)}
+          >
+            {piece.gallery.name}
+          </Anchor>
+        </p>
+
+        {#if piece.artist_name}
+          <svelte:boundary>
+            {@const artist = await get_artist_by_name_remote(piece.artist_name)}
+
+            {#snippet pending()}
+              <Icon
+                icon="lucide/user"
+                label={piece.artist_name}
+              />
+            {/snippet}
+
+            {#if artist}
+              <Anchor
+                icon="lucide/user"
+                href={resolve("/artist/[slug]", artist)}
+              >
+                {artist.name}
+              </Anchor>
+            {:else}
+              <Icon
+                icon="lucide/user"
+                label={piece.artist_name}
+              />
+            {/if}
+          </svelte:boundary>
+        {/if}
+      </div>
     {/snippet}
   </Card>
 </section>

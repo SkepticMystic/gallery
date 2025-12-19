@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ArtistAutocomplete from "$lib/components/input/artist/ArtistAutocomplete.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import FieldGroup from "$lib/components/ui/field/field-group.svelte";
   import FieldSeparator from "$lib/components/ui/field/field-separator.svelte";
@@ -18,7 +19,9 @@
   let props:
     | {
         mode: "create";
-        initial?: Partial<Pick<PieceSchema["insert"], "gallery_id">>;
+        initial?: Partial<
+          Pick<PieceSchema["insert"], "gallery_id" | "artist_name">
+        >;
       }
     | {
         mode: "update";
@@ -35,6 +38,10 @@
     if (props.initial.gallery_id) {
       form.fields.gallery_id.set(props.initial.gallery_id);
     }
+
+    if (props.initial.artist_name) {
+      form.fields.artist_name.set(props.initial.artist_name);
+    }
   }
   $effect(() => {
     if (props.mode === "update") {
@@ -42,6 +49,10 @@
     } else if (props.initial) {
       if (props.initial.gallery_id) {
         form.fields.gallery_id.set(props.initial.gallery_id);
+      }
+
+      if (props.initial.artist_name) {
+        form.fields.artist_name.set(props.initial.artist_name);
       }
     }
   });
@@ -132,6 +143,22 @@
           />
         {/if}
       {/if}
+
+      <Field
+        label="Artist"
+        orientation="responsive"
+        field={form.fields.artist_name}
+        description="Who is the artist of this piece?"
+      >
+        {#snippet input({ props, field })}
+          <ArtistAutocomplete
+            {...props}
+            {...field?.as("text")}
+            required
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
 
       <Field
         label="Medium *"
