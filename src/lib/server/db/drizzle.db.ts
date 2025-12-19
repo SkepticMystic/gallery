@@ -3,6 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as ArtistModel from "./models/artist.model";
 import * as AuthModels from "./models/auth.model";
+import * as EnquiryModel from "./models/enquiry.model";
 import * as GalleryModel from "./models/gallery.model";
 import * as ImageModel from "./models/image.model";
 import * as PageViewModel from "./models/page_view.model";
@@ -32,6 +33,8 @@ const { PieceTable, ...piece_rest } = PieceModel;
 const { ArtistTable, ...artist_rest } = ArtistModel;
 
 const { PageViewTable, ...page_view_rest } = PageViewModel;
+
+const { EnquiryTable, ...enquiry_rest } = EnquiryModel;
 
 export const db = drizzle(client, {
   casing: "snake_case",
@@ -67,5 +70,9 @@ export const db = drizzle(client, {
     // PageView
     page_view: PageViewTable,
     ...page_view_rest,
+
+    // Enquiry
+    enquiry: EnquiryTable,
+    ...enquiry_rest,
   },
 });

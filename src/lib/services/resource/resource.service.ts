@@ -14,7 +14,7 @@ const get_by_kind_and_id = async (input: {
     case "gallery": {
       const res = await Repo.query(
         db.query.gallery.findFirst({
-          columns: { id: true, org_id: true, slug: true },
+          columns: { id: true, org_id: true, name: true, slug: true },
           where: (res, { eq }) => eq(res.id, input.resource_id),
         }),
       );
@@ -29,7 +29,7 @@ const get_by_kind_and_id = async (input: {
     case "piece": {
       const res = await Repo.query(
         db.query.piece.findFirst({
-          columns: { id: true, org_id: true, slug: true },
+          columns: { id: true, org_id: true, name: true, slug: true },
           where: (res, { eq }) => eq(res.id, input.resource_id),
         }),
       );

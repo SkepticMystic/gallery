@@ -4,6 +4,7 @@ import type {
   Organization,
   User,
 } from "$lib/server/db/models/auth.model";
+import type { Enquiry } from "$lib/server/db/models/enquiry.model";
 import type { SendEmailOptions } from "$lib/services/email.service";
 import { App } from "$lib/utils/app";
 import { APP } from "./app.const";
@@ -162,6 +163,44 @@ ${COMMON.SIGNATURE.HTML}`.trim();
         html,
         to: ADMIN_EMAIL,
         subject: `New contact form submission from ${input.name}`,
+      };
+    },
+
+    "enquiry-submitted": (input: {
+      enquiry: Enquiry;
+      owner: { name: string; email: string };
+      resource: { name: string; slug: string };
+    }) => {
+      const href = App.full_url(
+        `/s/${input.enquiry.resource_kind}/${input.resource.slug}`,
+      ).toString();
+
+      const html = `
+<p>Hi ${input.owner.name},</p>
+<p>
+  We've received a new enquiry from ${input.enquiry.email} about the ${input.enquiry.resource_kind}: "${input.resource.name}".
+</p>
+<p>
+  <strong>Name:</strong> ${input.enquiry.name}
+</p>
+<p>
+  <strong>Email:</strong> ${input.enquiry.email}
+</p>
+<p>
+  <strong>${input.enquiry.resource_kind}:</strong> 
+  <a href="${href}">${input.resource.name}</a>
+</p>
+
+<p>
+  <strong>Message:</strong> ${input.enquiry.message}
+</p>
+
+${COMMON.SIGNATURE.HTML}`.trim();
+
+      return {
+        html,
+        to: input.owner.email,
+        subject: `New enquiry from ${input.enquiry.name}`,
       };
     },
   },
