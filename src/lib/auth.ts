@@ -274,7 +274,16 @@ export const auth = betterAuth({
       subscription: {
         enabled: true,
         requireEmailVerification: true,
-        plans: [],
+        plans: [
+          {
+            name: "Starter",
+            interval: "monthly",
+            planCode: "PLN_912yjmwpzgdzzy2",
+            freeTrial: {
+              days: 14,
+            },
+          },
+        ],
 
         authorizeReference: async (
           { action, session, user, referenceId },
