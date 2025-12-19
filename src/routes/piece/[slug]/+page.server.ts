@@ -2,9 +2,11 @@ import { ERROR } from "$lib/const/error.const";
 import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
+import { PageViewService } from "$lib/services/page_view/page_view.service";
 import { Markdown } from "$lib/utils/markdown/markdown.util";
 import { SEOUtil } from "$lib/utils/seo/seo.util";
 import { error } from "@sveltejs/kit";
+import { waitUntil } from "@vercel/functions";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params }) => {
@@ -51,6 +53,8 @@ export const load = (async ({ params }) => {
       ? Markdown.to_html(piece.data.description)
       : null,
   };
+
+  waitUntil(PageViewService.create({ page_key: `piece:${piece.data.id}` }));
 
   return {
     prerendered,
