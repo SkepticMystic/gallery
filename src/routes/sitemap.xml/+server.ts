@@ -9,7 +9,7 @@ import * as sitemap from "super-sitemap";
 export const prerender = true;
 
 export const GET: RequestHandler = async () => {
-  const [galleries, pieces] = await Promise.all([
+  const [galleries, pieces, artists] = await Promise.all([
     Repo.query(
       db.query.gallery.findMany({
         columns: { slug: true, updatedAt: true },
@@ -20,9 +20,14 @@ export const GET: RequestHandler = async () => {
         columns: { slug: true, updatedAt: true },
       }),
     ),
+    Repo.query(
+      db.query.artist.findMany({
+        columns: { slug: true, updatedAt: true },
+      }),
+    ),
   ]);
 
-  if (!galleries.ok || !pieces.ok) {
+  if (!galleries.ok || !pieces.ok || !artists.ok) {
     error(500, ERROR.INTERNAL_SERVER_ERROR);
   }
 
@@ -37,6 +42,10 @@ export const GET: RequestHandler = async () => {
         lastmod: d.updatedAt?.toISOString().split("T")[0],
       })),
       "/piece/[slug]": pieces.data.map((d) => ({
+        values: [d.slug],
+        lastmod: d.updatedAt?.toISOString().split("T")[0],
+      })),
+      "/artist/[slug]": artists.data.map((d) => ({
         values: [d.slug],
         lastmod: d.updatedAt?.toISOString().split("T")[0],
       })),

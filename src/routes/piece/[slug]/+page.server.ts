@@ -3,6 +3,7 @@ import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
 import { PageViewService } from "$lib/services/page_view/page_view.service";
+import { Log } from "$lib/utils/logger.util";
 import { Markdown } from "$lib/utils/markdown/markdown.util";
 import { SEOUtil } from "$lib/utils/seo/seo.util";
 import { error } from "@sveltejs/kit";
@@ -45,6 +46,7 @@ export const load = (async ({ params }) => {
 
   // Only show pieces from approved galleries
   if (!piece.ok || !piece.data || !piece.data.gallery.admin_approved) {
+    Log.info(piece);
     error(404, ERROR.NOT_FOUND);
   }
 
