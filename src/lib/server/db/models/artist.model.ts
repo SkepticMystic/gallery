@@ -1,36 +1,53 @@
 import type { Branded } from "$lib/interfaces/zod/zod.types";
-import { boolean, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 import { OrganizationTable } from "./auth.model";
+import { ImageTable } from "./image.model";
 import { Schema } from "./index.schema";
+import { PieceTable } from "./piece.model";
 
 // Define Artist table schema
-export const ArtistTable = pgTable("artist", {
-  ...Schema.id(),
+export const ArtistTable = pgTable(
+  "artist",
+  {
+    ...Schema.id(),
 
-  name: varchar({ length: 255 }).notNull(),
-  slug: varchar({ length: 255 }).notNull().unique(),
-  normalized_name: varchar({ length: 255 })
-    .notNull()
-    .unique()
-    .$type<Branded<"NormalizedName">>(),
+    name: varchar({ length: 255 }).notNull(),
+    slug: varchar({ length: 255 }).notNull().unique(),
+    normalized_name: varchar({ length: 255 })
+      .notNull()
+      .unique()
+      .$type<Branded<"NormalizedName">>(),
 
-  description: text().default("").notNull(),
+    description: text().default("").notNull(),
 
-  created_by_org_id: uuid()
-    .references(() => OrganizationTable.id, { onDelete: "no action" })
-    .notNull(),
+    created_by_org_id: uuid()
+      .references(() => OrganizationTable.id, { onDelete: "no action" })
+      .notNull(),
 
-  is_approved: boolean().default(false).notNull(),
+    is_approved: boolean().default(false).notNull(),
 
-  ...Schema.timestamps,
-});
+    ...Schema.timestamps,
+  },
+  (table) => [
+    // NOTE: The Piece.artist_name field is a foreign key
+    index("idx_artist_name").on(table["name"]),
+  ],
+);
 
-// export const artist_relations = relations(ArtistTable, ({ many }) => ({
-// pieces: many(PieceTable),
-// images: many(ImageTable),
-// }));
+export const artist_relations = relations(ArtistTable, ({ many }) => ({
+  pieces: many(PieceTable),
+  images: many(ImageTable),
+}));
 
 export type Artist = typeof ArtistTable.$inferSelect;
 

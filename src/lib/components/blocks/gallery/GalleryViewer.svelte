@@ -111,12 +111,14 @@
 </section>
 
 {#if prerendered.description}
+  {@const html = prerendered.description}
+
   <section id="description">
     <h2 class="sr-only">Description</h2>
 
     <Card title="Description">
       {#snippet content()}
-        <PrerenderedMarkdown html={prerendered.description} />
+        <PrerenderedMarkdown {html} />
       {/snippet}
     </Card>
   </section>

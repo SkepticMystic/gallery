@@ -5,6 +5,7 @@ import * as ArtistModel from "./models/artist.model";
 import * as AuthModels from "./models/auth.model";
 import * as GalleryModel from "./models/gallery.model";
 import * as ImageModel from "./models/image.model";
+import * as PageViewModel from "./models/page_view.model";
 import * as PieceModel from "./models/piece.model";
 
 const client = neon(DATABASE_URL);
@@ -29,6 +30,8 @@ const { GalleryTable, ...gallery_rest } = GalleryModel;
 const { PieceTable, ...piece_rest } = PieceModel;
 
 const { ArtistTable, ...artist_rest } = ArtistModel;
+
+const { PageViewTable, ...page_view_rest } = PageViewModel;
 
 export const db = drizzle(client, {
   casing: "snake_case",
@@ -60,5 +63,9 @@ export const db = drizzle(client, {
     // Artist
     artist: ArtistTable,
     ...artist_rest,
+
+    // PageView
+    page_view: PageViewTable,
+    ...page_view_rest,
   },
 });

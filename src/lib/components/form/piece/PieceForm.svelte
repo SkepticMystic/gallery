@@ -34,25 +34,33 @@
 
   if (props.mode === "update") {
     form.fields.set(props.initial);
-  } else if (props.initial) {
-    if (props.initial.gallery_id) {
-      form.fields.gallery_id.set(props.initial.gallery_id);
-    }
+  } else {
+    form.fields.is_published.set(false);
 
-    if (props.initial.artist_name) {
-      form.fields.artist_name.set(props.initial.artist_name);
-    }
-  }
-  $effect(() => {
-    if (props.mode === "update") {
-      form.fields.set(props.initial);
-    } else if (props.initial) {
+    if (props.initial) {
       if (props.initial.gallery_id) {
         form.fields.gallery_id.set(props.initial.gallery_id);
       }
 
       if (props.initial.artist_name) {
         form.fields.artist_name.set(props.initial.artist_name);
+      }
+    }
+  }
+  $effect(() => {
+    if (props.mode === "update") {
+      form.fields.set(props.initial);
+    } else {
+      form.fields.is_published.set(false);
+
+      if (props.initial) {
+        if (props.initial.gallery_id) {
+          form.fields.gallery_id.set(props.initial.gallery_id);
+        }
+
+        if (props.initial.artist_name) {
+          form.fields.artist_name.set(props.initial.artist_name);
+        }
       }
     }
   });

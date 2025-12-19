@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
+import { ArtistTable } from "./artist.model";
 import { OrganizationTable } from "./auth.model";
 import { GalleryTable } from "./gallery.model";
 import { ImageTable } from "./image.model";
@@ -68,6 +69,10 @@ export const piece_relations = relations(PieceTable, ({ one, many }) => ({
   gallery: one(GalleryTable, {
     fields: [PieceTable.gallery_id],
     references: [GalleryTable.id],
+  }),
+  artist: one(ArtistTable, {
+    fields: [PieceTable.artist_name],
+    references: [ArtistTable.name],
   }),
 
   images: many(ImageTable),

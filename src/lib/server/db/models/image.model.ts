@@ -12,6 +12,7 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { IMAGE_HOSTING } from "../../../const/image/image_hosting.const";
 import { RESOURCES } from "../../../const/resource/resource.const";
+import { ArtistTable } from "./artist.model";
 import { OrganizationTable } from "./auth.model";
 import { GalleryTable } from "./gallery.model";
 import { Schema } from "./index.schema";
@@ -74,6 +75,11 @@ export const image_relations = relations(ImageTable, ({ one }) => ({
   piece: one(PieceTable, {
     fields: [ImageTable.resource_id],
     references: [PieceTable.id],
+  }),
+
+  artist: one(ArtistTable, {
+    fields: [ImageTable.resource_id],
+    references: [ArtistTable.id],
   }),
 }));
 

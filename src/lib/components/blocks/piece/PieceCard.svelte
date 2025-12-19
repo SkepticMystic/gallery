@@ -27,10 +27,12 @@
     <span>
       {piece.medium}
     </span>
-    <br />
-    <span>
-      {Format.currency(piece.price)}
-    </span>
+    {#if piece.price}
+      <br />
+      <span>
+        {Format.currency(piece.price)}
+      </span>
+    {/if}
   {/snippet}
 
   {#snippet content()}
