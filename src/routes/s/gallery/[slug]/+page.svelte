@@ -2,6 +2,7 @@
   import { resolve } from "$app/paths";
   import GalleryViewer from "$lib/components/blocks/gallery/GalleryViewer.svelte";
   import PieceCard from "$lib/components/blocks/piece/PieceCard.svelte";
+  import Picture from "$lib/components/image/Picture.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import CardList from "$lib/components/ui/card/CardList.svelte";
@@ -13,7 +14,15 @@
 
 <article>
   <header class="flex flex-wrap items-center justify-between gap-2">
-    <h1>{gallery.name}</h1>
+    <div class="flex items-center gap-2">
+      <Picture
+        width={48}
+        height={48}
+        src={gallery.logo}
+        alt="{gallery.name} logo"
+      />
+      <h1>{gallery.name}</h1>
+    </div>
 
     <ButtonGroup>
       <ButtonGroup>

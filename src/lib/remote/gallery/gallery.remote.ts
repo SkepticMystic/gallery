@@ -8,9 +8,24 @@ import {
 import { Repo } from "$lib/server/db/repos/index.repo";
 import { get_seller_session, get_session } from "$lib/services/auth.service";
 import { GalleryService } from "$lib/services/gallery/gallery.service";
+import { result } from "$lib/utils/result.util";
 import { invalid, redirect } from "@sveltejs/kit";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import z from "zod";
+
+export const get_random_public_gallery_remote = query(async () => {
+  const res = await Repo.query(
+    db
+      .select()
+      .from(GalleryTable)
+      .where(eq(GalleryTable.admin_approved, true))
+      .orderBy(sql.raw("RANDOM()"))
+      .limit(1)
+      .execute(),
+  );
+
+  return res.ok ? result.suc(res.data.at(0)) : result.err(res.error);
+});
 
 export const list_my_galleries_remote = query(async () => {
   const { session } = await get_seller_session();

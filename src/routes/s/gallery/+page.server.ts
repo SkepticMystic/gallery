@@ -1,12 +1,14 @@
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import { SEOUtil } from "$lib/utils/seo/seo.util";
+import { get_seller_session } from "$lib/services/auth.service";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async () => {
+  const { session } = await get_seller_session();
+
   const galleries = await Repo.query(
     db.query.gallery.findMany({
-      where: (gallery, { eq }) => eq(gallery.admin_approved, true),
+      where: (gallery, { eq }) => eq(gallery.org_id, session.org_id),
 
       columns: {
         id: true,
@@ -23,10 +25,5 @@ export const load = (async () => {
 
   return {
     galleries: galleries.ok ? galleries.data : [],
-
-    seo: SEOUtil.transform({
-      title: "Galleries",
-      description: "Browse public art galleries",
-    }),
   };
 }) satisfies PageServerLoad;

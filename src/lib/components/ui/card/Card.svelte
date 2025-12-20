@@ -22,7 +22,7 @@
     title?: MaybeSnippet;
     description?: MaybeSnippet;
 
-    content: Snippet;
+    content: MaybeSnippet;
     footer?: Snippet;
   } = $props();
 </script>
@@ -45,7 +45,7 @@
   {/if}
 
   <CardContent>
-    {@render content()}
+    <ExtractSnippet snippet={content} />
   </CardContent>
 
   {#if footer}

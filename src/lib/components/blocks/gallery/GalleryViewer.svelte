@@ -8,6 +8,7 @@
   import type { Image } from "$lib/server/db/models/image.model";
   import type { IHTML } from "$lib/utils/html/html.util";
   import { Url } from "$lib/utils/urls";
+  import { parsePhoneNumberFromString as parse_phone_number } from "libphonenumber-js/min";
 
   let {
     gallery,
@@ -23,8 +24,6 @@
       | "emails"
       | "google_place_id"
       | "formatted_address"
-      | "coord_lat"
-      | "coord_lng"
       | "updatedAt"
     > & {
       images: Pick<Image, "url" | "thumbhash">[];
@@ -35,16 +34,6 @@
     };
   } = $props();
 </script>
-
-{#if gallery.logo}
-  <section id="logo">
-    <img
-      src={gallery.logo}
-      alt="{gallery.name} logo"
-      class="h-24 w-auto object-contain"
-    />
-  </section>
-{/if}
 
 {#if gallery.images.length}
   <section id="images">
@@ -66,7 +55,7 @@
 <section id="info">
   <h2 class="sr-only">Info</h2>
 
-  <address class="space-y-2">
+  <address class="flex flex-wrap justify-between gap-2">
     {#if gallery.urls.length > 0}
       <div class="flex flex-col gap-1">
         {#each gallery.urls as { data, label } (data)}
@@ -102,7 +91,7 @@
             icon="lucide/phone"
             href="tel:{data}"
           >
-            {label || data}
+            {label || parse_phone_number(data)?.formatNational() || data}
           </Anchor>
         {/each}
       </div>

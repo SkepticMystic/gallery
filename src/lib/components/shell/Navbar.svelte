@@ -12,6 +12,7 @@
   import ButtonGroup from "../ui/button-group/button-group.svelte";
   import Button from "../ui/button/button.svelte";
   import DropdownMenu from "../ui/dropdown-menu/DropdownMenu.svelte";
+  import Logo from "../ui/image/Logo.svelte";
   import ThemeSelector from "./ThemeSelector.svelte";
 
   interface Route {
@@ -96,13 +97,16 @@
   };
 </script>
 
-<nav class="mx-auto flex h-16 max-w-5xl items-center justify-between px-3">
+<nav
+  class="mx-auto flex h-16 max-w-4xl items-center justify-between px-3 sm:px-0"
+>
   <ButtonGroup>
     <Button
       href="/"
       size="lg"
       variant="link"
     >
+      <Logo />
       {APP.NAME}
     </Button>
   </ButtonGroup>

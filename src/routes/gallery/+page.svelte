@@ -1,8 +1,5 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
-  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
-  import Icon from "$lib/components/ui/icon/Icon.svelte";
-  import Item from "$lib/components/ui/item/Item.svelte";
+  import GalleryItem from "$lib/components/blocks/gallery/GalleryItem.svelte";
   import ItemList from "$lib/components/ui/item/ItemList.svelte";
 
   let { data } = $props();
@@ -24,32 +21,7 @@
       }}
     >
       {#snippet item(gallery)}
-        <Item>
-          {#snippet title()}
-            <span class="flex items-center gap-2">
-              {#if gallery.logo}
-                <img
-                  src={gallery.logo}
-                  alt={gallery.name}
-                  class="h-10 w-10 rounded-md object-cover"
-                />
-              {/if}
-
-              <Anchor href={resolve("/gallery/[slug]", gallery)}>
-                {gallery.name}
-              </Anchor>
-            </span>
-          {/snippet}
-
-          {#snippet description()}
-            {#if gallery.formatted_address}
-              <Icon
-                icon="lucide/map-pin"
-                label={gallery.formatted_address}
-              />
-            {/if}
-          {/snippet}
-        </Item>
+        <GalleryItem {gallery} />
       {/snippet}
     </ItemList>
   </section>
