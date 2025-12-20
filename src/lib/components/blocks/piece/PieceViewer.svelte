@@ -3,8 +3,10 @@
   import Picture from "$lib/components/image/Picture.svelte";
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
+  import Badge from "$lib/components/ui/badge/badge.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
+  import { PIECE } from "$lib/const/piece/piece.const";
   import { get_artist_by_name_remote } from "$lib/remote/artist/artist.remote";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
@@ -22,7 +24,9 @@
       | "name"
       | "slug"
       | "price"
+      | "status"
       | "medium"
+      | "style"
       | "weight_kg"
       | "width_cm"
       | "height_cm"
@@ -55,6 +59,8 @@
         prioritize
         class="max-w-fit"
         image={primary_image}
+        width={primary_image.width}
+        height={primary_image.height}
       />
       <!-- width={primary_image.width}
         height={primary_image.height} -->
@@ -89,9 +95,21 @@
       </p>
 
       <p>
+        <Badge variant="outline">
+          {PIECE.STATUS.MAP[piece.status].label}
+        </Badge>
+      </p>
+
+      <p>
         <Icon icon="lucide/brush" />
         {piece.medium}
       </p>
+      {#if piece.style}
+        <p>
+          <Icon icon="lucide/palette" />
+          {piece.style}
+        </p>
+      {/if}
 
       {#if dimensions}
         <p>
