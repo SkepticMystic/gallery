@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import { page } from "$app/state";
   import Picture from "$lib/components/image/Picture.svelte";
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
@@ -135,7 +136,12 @@
         <p>
           <Anchor
             icon="lucide/building"
-            href={resolve("/s/gallery/[slug]", piece.gallery)}
+            href={resolve(
+              page.route.id?.startsWith("/s/")
+                ? "/s/gallery/[slug]"
+                : "/gallery/[slug]",
+              piece.gallery,
+            )}
           >
             {piece.gallery.name}
           </Anchor>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import { page } from "$app/state";
   import Picture from "$lib/components/image/Picture.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
@@ -14,11 +15,18 @@
       images: Pick<Image, "url" | "thumbhash">[];
     };
   } = $props();
+
+  const href = $derived(
+    resolve(
+      page.route.id?.startsWith("/s/") ? "/s/piece/[slug]" : "/piece/[slug]",
+      piece,
+    ),
+  );
 </script>
 
 <Card>
   {#snippet title()}
-    <Anchor href={resolve("/s/piece/[slug]", piece)}>
+    <Anchor {href}>
       {piece.name}
     </Anchor>
   {/snippet}
@@ -39,7 +47,7 @@
     {@const [image] = piece.images}
 
     {#if image}
-      <a href={resolve("/s/piece/[slug]", piece)}>
+      <a {href}>
         <Picture
           {image}
           width={200}
