@@ -1,6 +1,7 @@
 <script lang="ts">
   import ArtistViewer from "$lib/components/blocks/artist/ArtistViewer.svelte";
   import ShareButton from "$lib/components/buttons/ShareButton.svelte";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import { ArtistUtil } from "$lib/utils/artist/artist.util.js";
 
@@ -10,7 +11,15 @@
 
 <article>
   <header class="flex flex-wrap items-center justify-between gap-2">
-    <h1>{artist.name}</h1>
+    <div class="space-y-2">
+      <h1>{artist.name}</h1>
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Artists
+      </Anchor>
+    </div>
 
     <ButtonGroup>
       <ShareButton data={ArtistUtil.share_data(artist)} />

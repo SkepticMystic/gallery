@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import PieceViewer from "$lib/components/blocks/piece/PieceViewer.svelte";
   import ShareButton from "$lib/components/buttons/ShareButton.svelte";
   import EnquiryModal from "$lib/components/modal/enquiry/EnquiryModal.svelte";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import { PieceUtil } from "$lib/utils/piece/piece.util.js";
 
@@ -12,7 +14,16 @@
 
 <article>
   <header class="flex flex-wrap items-center justify-between gap-2">
-    <h1>{piece.name}</h1>
+    <div class="space-y-2">
+      <h1>{piece.name}</h1>
+
+      <Anchor
+        href={resolve("/gallery/[slug]", piece.gallery)}
+        icon="lucide/arrow-left"
+      >
+        Back to Gallery
+      </Anchor>
+    </div>
 
     <ButtonGroup>
       <ButtonGroup>

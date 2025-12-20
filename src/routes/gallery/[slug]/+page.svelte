@@ -3,6 +3,7 @@
   import PieceCard from "$lib/components/blocks/piece/PieceCard.svelte";
   import ShareButton from "$lib/components/buttons/ShareButton.svelte";
   import Picture from "$lib/components/image/Picture.svelte";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import CardList from "$lib/components/ui/card/CardList.svelte";
   import { GalleryUtil } from "$lib/utils/gallery/gallery.util.js";
@@ -13,14 +14,24 @@
 
 <article>
   <header class="flex flex-wrap items-center justify-between gap-2">
-    <div class="flex items-center gap-2">
-      <Picture
-        width={48}
-        height={48}
-        src={gallery.logo}
-        alt="{gallery.name} logo"
-      />
-      <h1>{gallery.name}</h1>
+    <div class="space-y-2">
+      <div class="flex items-center gap-2">
+        <Picture
+          width={48}
+          height={48}
+          src={gallery.logo}
+          alt="{gallery.name} logo"
+        />
+
+        <h1>{gallery.name}</h1>
+      </div>
+
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Galleries
+      </Anchor>
     </div>
 
     <ButtonGroup>
