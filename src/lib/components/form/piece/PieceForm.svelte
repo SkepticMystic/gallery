@@ -9,6 +9,7 @@
   import NativeSelect from "$lib/components/ui/native-select/native-select.svelte";
   import Switch from "$lib/components/ui/switch/switch.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
+  import { PIECE } from "$lib/const/piece/piece.const";
   import { list_my_galleries_remote } from "$lib/remote/gallery/gallery.remote";
   import { upsert_piece_remote } from "$lib/remote/piece/piece.remote";
   import type { PieceSchema } from "$lib/server/db/models/piece.model";
@@ -95,18 +96,59 @@
         label="Publish"
         orientation="responsive"
         field={form.fields.is_published}
-        description="Show this piece to the public?"
+        description="Show this piece to the public"
       >
         {#snippet input({ props, field })}
-          <Switch
-            {...props}
-            {...field?.as("checkbox")}
-            required
-            type="button"
-          />
+          <div>
+            <Switch
+              {...props}
+              {...field?.as("checkbox")}
+              type="button"
+            />
+          </div>
         {/snippet}
       </Field>
 
+      <Field
+        label="Featured"
+        orientation="responsive"
+        field={form.fields.is_featured}
+        description="Highlight this piece on the gallery page"
+      >
+        {#snippet input({ props, field })}
+          <div>
+            <Switch
+              {...props}
+              {...field?.as("checkbox")}
+              type="button"
+            />
+          </div>
+        {/snippet}
+      </Field>
+
+      <Field
+        label="Status *"
+        orientation="responsive"
+        field={form.fields.status}
+      >
+        {#snippet input({ props, field })}
+          <NativeSelect
+            {...props}
+            {...field?.as("select")}
+            required
+            class="sm:min-w-[300px]"
+            options={PIECE.STATUS.IDS.map((id) => ({
+              value: id,
+              label: PIECE.STATUS.MAP[id].label,
+            }))}
+          />
+        {/snippet}
+      </Field>
+    </FieldGroup>
+
+    <FieldSeparator />
+
+    <FieldGroup>
       <Field
         label="Title *"
         orientation="responsive"
@@ -122,7 +164,6 @@
           />
         {/snippet}
       </Field>
-
       {#if galleries.current?.ok}
         {#if galleries.current.data.length > 1}
           <Field
@@ -153,7 +194,6 @@
           />
         {/if}
       {/if}
-
       <Field
         label="Artist"
         orientation="responsive"
@@ -169,7 +209,11 @@
           />
         {/snippet}
       </Field>
+    </FieldGroup>
 
+    <FieldSeparator />
+
+    <FieldGroup>
       <Field
         label="Medium *"
         orientation="responsive"
@@ -185,107 +229,126 @@
         {/snippet}
       </Field>
 
-      <FieldGroup>
-        <Field
-          label="Width"
-          orientation="responsive"
-          field={form.fields.width_cm}
-        >
-          {#snippet input({ props, field })}
-            <Input
-              {...props}
-              {...field?.as("number")}
-              step={0.01}
-              addon="cm"
-              class="sm:min-w-[300px]"
-            />
-          {/snippet}
-        </Field>
+      <Field
+        label="Style"
+        orientation="responsive"
+        field={form.fields.style}
+        description="The style of the piece. For example, abstract, figurative, landscape, etc."
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("text")}
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
+    </FieldGroup>
 
-        <Field
-          label="Height"
-          orientation="responsive"
-          field={form.fields.height_cm}
-        >
-          {#snippet input({ props, field })}
-            <Input
-              {...props}
-              {...field?.as("number")}
-              step={0.01}
-              addon="cm"
-              class="sm:min-w-[300px]"
-            />
-          {/snippet}
-        </Field>
+    <FieldSeparator />
 
-        <Field
-          label="Depth"
-          orientation="responsive"
-          field={form.fields.depth_cm}
-        >
-          {#snippet input({ props, field })}
-            <Input
-              {...props}
-              {...field?.as("number")}
-              step={0.01}
-              addon="cm"
-              class="sm:min-w-[300px]"
-            />
-          {/snippet}
-        </Field>
+    <FieldGroup>
+      <Field
+        label="Width"
+        orientation="responsive"
+        field={form.fields.width_cm}
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("number")}
+            step={0.01}
+            addon="cm"
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
 
-        <Field
-          label="Weight"
-          orientation="responsive"
-          field={form.fields.weight_kg}
-        >
-          {#snippet input({ props, field })}
-            <Input
-              {...props}
-              {...field?.as("number")}
-              step={0.01}
-              addon="kg"
-              class="sm:min-w-[300px]"
-            />
-          {/snippet}
-        </Field>
+      <Field
+        label="Height"
+        orientation="responsive"
+        field={form.fields.height_cm}
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("number")}
+            step={0.01}
+            addon="cm"
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
 
-        <Field
-          label="Year created"
-          orientation="responsive"
-          field={form.fields.year_created}
-        >
-          {#snippet input({ props, field })}
-            <Input
-              {...props}
-              {...field?.as("number")}
-              class="sm:min-w-[300px]"
-            />
-          {/snippet}
-        </Field>
-      </FieldGroup>
-      <FieldSeparator />
+      <Field
+        label="Depth"
+        orientation="responsive"
+        field={form.fields.depth_cm}
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("number")}
+            step={0.01}
+            addon="cm"
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
 
-      <FieldGroup>
-        <Field
-          label="Price"
-          orientation="responsive"
-          field={form.fields.price}
-        >
-          {#snippet input({ props, field })}
-            <Input
-              {...props}
-              {...field?.as("number")}
-              addon="R"
-              align="inline-start"
-              class="sm:min-w-[300px]"
-              step={0.01}
-            />
-          {/snippet}
-        </Field>
-      </FieldGroup>
-      <FieldSeparator />
+      <Field
+        label="Weight"
+        orientation="responsive"
+        field={form.fields.weight_kg}
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("number")}
+            step={0.01}
+            addon="kg"
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
 
+      <Field
+        label="Year created"
+        orientation="responsive"
+        field={form.fields.year_created}
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("number")}
+            class="sm:min-w-[300px]"
+          />
+        {/snippet}
+      </Field>
+    </FieldGroup>
+    <FieldSeparator />
+
+    <FieldGroup>
+      <Field
+        label="Price"
+        orientation="responsive"
+        field={form.fields.price}
+      >
+        {#snippet input({ props, field })}
+          <Input
+            {...props}
+            {...field?.as("number")}
+            addon="R"
+            align="inline-start"
+            class="sm:min-w-[300px]"
+            step={0.01}
+          />
+        {/snippet}
+      </Field>
+    </FieldGroup>
+    <FieldSeparator />
+
+    <FieldGroup>
       <Field
         label="Description"
         orientation="responsive"
@@ -311,12 +374,11 @@
           />
         {/snippet}
       </Field>
-
-      <FormButton
-        {form}
-        class="w-full"
-      />
     </FieldGroup>
-    <FieldSeparator />
+
+    <FormButton
+      {form}
+      class="w-full"
+    />
   </Fieldset>
 </form>

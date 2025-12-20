@@ -4,6 +4,7 @@ import {
   doublePrecision,
   index,
   integer,
+  pgEnum,
   pgTable,
   text,
   uuid,
@@ -11,11 +12,14 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
+import { PIECE } from "../../../const/piece/piece.const";
 import { ArtistTable } from "./artist.model";
 import { OrganizationTable } from "./auth.model";
 import { GalleryTable } from "./gallery.model";
 import { ImageTable } from "./image.model";
 import { Schema } from "./index.schema";
+
+export const piece_status_enum = pgEnum("piece_status", PIECE.STATUS.IDS);
 
 // Define Piece table schema
 export const PieceTable = pgTable(
@@ -33,6 +37,7 @@ export const PieceTable = pgTable(
 
     artist_name: varchar({ length: 255 }).notNull().default(""),
 
+    is_featured: boolean().default(false).notNull(),
     is_published: boolean().default(false).notNull(),
 
     name: varchar({ length: 255 }).notNull(),
@@ -40,6 +45,8 @@ export const PieceTable = pgTable(
     description: text().default("").notNull(),
 
     medium: text().notNull(),
+    style: varchar({ length: 511 }).notNull().default(""),
+    // category: varchar({ length: 511 }).notNull().default(""),
 
     width_cm: doublePrecision().notNull().default(0),
     height_cm: doublePrecision().notNull().default(0),
@@ -51,6 +58,8 @@ export const PieceTable = pgTable(
 
     price: doublePrecision().notNull().default(0),
 
+    status: piece_status_enum().notNull().default("available"),
+
     // is_published: boolean().default(false).notNull(),
 
     ...Schema.timestamps,
@@ -58,6 +67,7 @@ export const PieceTable = pgTable(
   (table) => [
     index("idx_piece_org_id").on(table["org_id"]),
     index("idx_piece_gallery_id").on(table["gallery_id"]),
+    index("idx_piece_status").on(table["status"]),
   ],
 );
 
@@ -83,19 +93,25 @@ export type Piece = typeof PieceTable.$inferSelect;
 const pick = {
   gallery_id: true,
   artist_name: true,
+
+  is_featured: true,
   is_published: true,
 
   name: true,
   description: true,
+
   medium: true,
+  style: true,
+  // category: true,
 
   depth_cm: true,
   height_cm: true,
   width_cm: true,
   weight_kg: true,
+  year_created: true,
 
   price: true,
-  year_created: true,
+  status: true,
 } satisfies Partial<Record<keyof Piece, true>>;
 
 const refinements = {
