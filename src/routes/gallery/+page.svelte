@@ -11,9 +11,7 @@
 <article>
   <header>
     <h1>Galleries</h1>
-    <p class="text-muted-foreground">
-      Discover art galleries from around the world
-    </p>
+    <p class="text-muted-foreground">Discover galleries near you</p>
   </header>
 
   <section>
