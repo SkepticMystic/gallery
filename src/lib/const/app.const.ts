@@ -7,7 +7,7 @@ export const APP = {
   ID: "gallery",
   NAME: "Gallery",
   URL: PUBLIC_BASE_URL,
-  LOGO: asset("/favicon.png"),
+  LOGO: asset("/favicon.svg"),
   DOMAIN: new URL(PUBLIC_BASE_URL).hostname,
   DESCRIPTION: "Find and share art that you love",
 };
