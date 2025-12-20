@@ -58,7 +58,7 @@
     "eslint-plugin-oxlint": "^1.33.0",
     "eslint-plugin-svelte": "^3.13.1",
     "globals": "^16.5.0",
-    "isomorphic-dompurify": "^2.34.0",
+    "isomorphic-dompurify": "2.26.0",
     "knip": "^5.75.2",
     "libphonenumber-js": "^1.12.31",
     "marked": "^17.0.1",
