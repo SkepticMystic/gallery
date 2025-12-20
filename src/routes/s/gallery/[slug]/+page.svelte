@@ -27,6 +27,7 @@
     <ButtonGroup>
       <ButtonGroup>
         <Button
+          variant="outline"
           icon="lucide/pencil"
           href={resolve("/s/gallery/[slug]/edit", gallery)}
         >
@@ -35,6 +36,7 @@
       </ButtonGroup>
       <ButtonGroup>
         <Button
+          variant="secondary"
           icon="lucide/frame"
           href={App.url("/s/piece/create", { gallery_id: gallery.id })}
         >

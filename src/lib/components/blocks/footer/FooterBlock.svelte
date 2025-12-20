@@ -18,7 +18,11 @@
   const sections: FooterSection[] = $derived([
     {
       title: "Pages",
-      links: [{ label: "Galleries", href: "/gallery" }],
+      links: [
+        { label: "Galleries", href: "/gallery" },
+        { label: "Pieces", href: "/piece" },
+        { label: "Artists", href: "/artist" },
+      ],
     },
     {
       title: "About",

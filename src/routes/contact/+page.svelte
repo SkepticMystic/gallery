@@ -36,8 +36,11 @@
   });
 </script>
 
-<article class="mx-auto max-w-xs">
-  <Card description="Fill out the form below to get in touch.">
+<article>
+  <Card
+    class="mx-auto max-w-md"
+    description="Fill out the form below to get in touch."
+  >
     {#snippet title()}
       <header>
         <h1>Contact Us</h1>

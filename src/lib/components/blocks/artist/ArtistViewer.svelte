@@ -4,6 +4,7 @@
   import Card from "$lib/components/ui/card/Card.svelte";
   import CardList from "$lib/components/ui/card/CardList.svelte";
   import type { Artist } from "$lib/server/db/models/artist.model";
+  import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { Piece } from "$lib/server/db/models/piece.model";
   import type { IHTML } from "$lib/utils/html/html.util";
@@ -16,6 +17,7 @@
     artist: Pick<Artist, "name" | "slug" | "updatedAt"> & {
       images: Pick<Image, "id" | "url" | "thumbhash" | "width" | "height">[];
       pieces: (Pick<Piece, "id" | "name" | "slug" | "medium" | "price"> & {
+        gallery: Pick<Gallery, "name" | "slug">;
         images: Pick<Image, "url" | "thumbhash" | "width" | "height">[];
       })[];
     };

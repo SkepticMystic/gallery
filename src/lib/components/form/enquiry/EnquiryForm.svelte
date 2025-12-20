@@ -67,7 +67,7 @@
   <input {...form.fields.resource_kind.as("hidden", resource_kind)} />
 
   <Field
-    label="Name"
+    label="Your Name"
     orientation="responsive"
     field={form.fields.name}
   >
@@ -100,6 +100,7 @@
     label="Message"
     orientation="responsive"
     field={form.fields.message}
+    description="What would you like to know about this {resource_kind}?"
   >
     {#snippet input({ props, field })}
       <Textarea

@@ -4,6 +4,7 @@
   import Picture from "$lib/components/image/Picture.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { Piece } from "$lib/server/db/models/piece.model";
   import { Format } from "$lib/utils/format.util";
@@ -12,6 +13,7 @@
     piece,
   }: {
     piece: Pick<Piece, "name" | "slug" | "medium" | "price"> & {
+      gallery?: Pick<Gallery, "name" | "slug">;
       images: Pick<Image, "url" | "thumbhash">[];
     };
   } = $props();
@@ -31,29 +33,40 @@
     </Anchor>
   {/snippet}
 
-  {#snippet description()}
-    <span>
-      {piece.medium}
-    </span>
-    {#if piece.price}
-      <br />
-      <span>
-        {Format.currency(piece.price)}
-      </span>
-    {/if}
-  {/snippet}
-
   {#snippet content()}
     {@const [image] = piece.images}
 
-    {#if image}
-      <a {href}>
-        <Picture
-          {image}
-          width={200}
-          height={200}
-        />
-      </a>
-    {/if}
+    <div class="flex flex-col gap-3">
+      {#if image}
+        <a {href}>
+          <Picture
+            {image}
+            width={200}
+            height={200}
+          />
+        </a>
+      {/if}
+
+      <div>
+        <p>
+          {piece.medium}
+        </p>
+        {#if piece.price}
+          <p>
+            {Format.currency(piece.price)}
+          </p>
+        {/if}
+        {#if piece.gallery}
+          <p>
+            <Anchor
+              icon="lucide/building"
+              href={resolve("/s/gallery/[slug]", piece.gallery)}
+            >
+              {piece.gallery.name}
+            </Anchor>
+          </p>
+        {/if}
+      </div>
+    </div>
   {/snippet}
 </Card>

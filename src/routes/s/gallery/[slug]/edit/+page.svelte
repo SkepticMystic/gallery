@@ -3,6 +3,7 @@
   import GalleryForm from "$lib/components/form/gallery/GalleryForm.svelte";
   import UploadImagesForm from "$lib/components/form/image/UploadImagesForm.svelte";
   import Picture from "$lib/components/image/Picture.svelte";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Badge from "$lib/components/ui/badge/badge.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -18,6 +19,8 @@
 <article>
   <header>
     <h1>{gallery.name}</h1>
+
+    <Anchor href="#images">Jump to Images</Anchor>
   </header>
 
   <GalleryForm
@@ -25,7 +28,9 @@
     initial={gallery}
   />
 
-  <section>
+  <Separator />
+
+  <section id="images">
     <h2>Images</h2>
 
     <UploadImagesForm

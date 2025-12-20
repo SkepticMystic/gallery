@@ -46,6 +46,13 @@ export const load = (async ({ params }) => {
           },
 
           with: {
+            gallery: {
+              columns: {
+                name: true,
+                slug: true,
+              },
+            },
+
             images: {
               limit: 1,
               where: (d, { eq }) => eq(d.admin_approved, true),
