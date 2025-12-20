@@ -1,4 +1,8 @@
-import { delete_gallery_by_id_remote } from "$lib/remote/gallery/gallery.remote";
+import {
+  admin_approve_gallery_remote,
+  admin_delete_gallery_remote,
+  delete_gallery_by_id_remote,
+} from "$lib/remote/gallery/gallery.remote";
 import { Client } from "../index.client";
 
 export const GalleryClient = {
@@ -8,5 +12,17 @@ export const GalleryClient = {
     {
       confirm: "Are you sure you want to delete this gallery?",
     },
+  ),
+
+  admin_delete: Client.wrap(
+    (gallery_id: string) => admin_delete_gallery_remote(gallery_id),
+    {
+      confirm: "Are you sure you want to delete this gallery?",
+    },
+  ),
+
+  admin_approve: Client.wrap(
+    (input: Parameters<typeof admin_approve_gallery_remote>[0]) =>
+      admin_approve_gallery_remote(input),
   ),
 };

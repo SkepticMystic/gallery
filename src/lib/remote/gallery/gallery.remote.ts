@@ -6,7 +6,7 @@ import {
   GalleryTable,
 } from "$lib/server/db/models/gallery.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import { get_seller_session } from "$lib/services/auth.service";
+import { get_seller_session, get_session } from "$lib/services/auth.service";
 import { GalleryService } from "$lib/services/gallery/gallery.service";
 import { invalid, redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -72,6 +72,32 @@ export const delete_gallery_by_id_remote = command(
           ),
         )
         .execute(),
+    );
+  },
+);
+
+export const admin_delete_gallery_remote = command(
+  z.uuid(), //
+  async (gallery_id) => {
+    await get_session({ admin: true });
+
+    return await Repo.delete_one(
+      db.delete(GalleryTable).where(eq(GalleryTable.id, gallery_id)).execute(),
+    );
+  },
+);
+
+export const admin_approve_gallery_remote = command(
+  z.object({ gallery_id: z.uuid(), approved: z.boolean() }),
+  async (input) => {
+    await get_session({ admin: true });
+
+    return await Repo.update_one(
+      db
+        .update(GalleryTable)
+        .set({ admin_approved: input.approved })
+        .where(eq(GalleryTable.id, input.gallery_id))
+        .returning(),
     );
   },
 );
