@@ -3,9 +3,6 @@ import {
   BETTER_AUTH_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  POCKETID_BASE_URL,
-  POCKETID_CLIENT_ID,
-  POCKETID_CLIENT_SECRET,
 } from "$env/static/private";
 import { passkey } from "@better-auth/passkey";
 import type { APIError } from "better-auth";
@@ -14,12 +11,10 @@ import { generateRandomString } from "better-auth/crypto";
 import { betterAuth } from "better-auth/minimal";
 import {
   admin,
-  genericOAuth,
   haveIBeenPwned,
   lastLoginMethod,
   organization,
   twoFactor,
-  type GenericOAuthConfig,
 } from "better-auth/plugins";
 import { sveltekitCookies } from "better-auth/svelte-kit";
 import { APP } from "./const/app.const";
@@ -266,52 +261,6 @@ export const auth = betterAuth({
       sendInvitationEmail: async (data) => {
         await EmailService.send(EMAIL.TEMPLATES["org-invite"](data));
       },
-    }),
-
-    genericOAuth({
-      config: [
-        POCKETID_CLIENT_ID && POCKETID_CLIENT_SECRET && POCKETID_BASE_URL
-          ? ((): GenericOAuthConfig => {
-              const providerId = "pocket-id" satisfies IAuth.ProviderId;
-
-              return {
-                providerId,
-                clientId: POCKETID_CLIENT_ID,
-                clientSecret: POCKETID_CLIENT_SECRET,
-
-                discoveryUrl:
-                  POCKETID_BASE_URL + "/.well-known/openid-configuration",
-                // ... other config options
-
-                mapProfileToUser: (profile: unknown) => {
-                  Log.info(profile, providerId + " profile");
-
-                  // NOTE: Typing profile directly in the callback arg gives a TS error, since better-auth expects Record<string, any>
-                  const typed = profile as IAuth.GenericOAuthProfile;
-
-                  const name = (
-                    typed.name ||
-                    (typed.given_name || "") +
-                      " " +
-                      (typed.family_name || "") ||
-                    ""
-                  )
-                    .trim()
-                    .replaceAll(/\s+/g, " ");
-
-                  return {
-                    name,
-                    email: typed.email,
-                    image: typed.picture,
-                    emailVerified:
-                      AUTH.PROVIDERS.MAP[providerId].force_email_verified ||
-                      typed.email_verified,
-                  };
-                },
-              };
-            })()
-          : null,
-      ].flatMap((cfg) => (cfg ? [cfg] : [])),
     }),
 
     // NOTE: Must be last, as it needs the request event
