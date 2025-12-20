@@ -41,12 +41,15 @@
     fetchpriority ??= "high";
   }
 
-  const style = $derived(
-    [width ? `width: ${width}px` : "", height ? `height: ${height}px` : ""]
-      .filter(Boolean)
-      .join("; ")
-      .trim(),
-  );
+  // const style = $derived(
+  //   [
+  //     width ? `max-width: ${width}px` : "",
+  //     height ? `max-height: ${height}px` : "",
+  //   ]
+  //     .filter(Boolean)
+  //     .join("; ")
+  //     .trim(),
+  // );
 
   const thumbhash_url = $derived(ImageClient.decode_thumbhash(image));
 
@@ -57,9 +60,9 @@
 
 {#snippet img()}
   {#if image || src}
+    <!-- {style} -->
     <ImageBase
       {alt}
-      {style}
       {width}
       {height}
       {loading}
@@ -79,8 +82,8 @@
       }}
     />
   {:else if fallback}
+    <!-- {style} -->
     <div
-      {style}
       class={cn("flex items-center justify-center rounded-md bg-muted", klass)}
     >
       {fallback}
