@@ -92,89 +92,133 @@
 <section id="info">
   <Card title="Info">
     {#snippet content()}
-      <div class="space-y-3">
-        <p class="text-xl font-medium">
-          {piece.price ? Format.currency(piece.price) : "No price"}
-        </p>
+      <dl class="space-y-3">
+        <div>
+          <dt class="sr-only">Price</dt>
+          <dd class="text-xl font-medium">
+            {piece.price ? Format.currency(piece.price) : "No price"}
+          </dd>
+        </div>
 
-        <Badge variant="outline">
-          {PIECE.STATUS.MAP[piece.status].label}
-        </Badge>
+        <div>
+          <dt class="sr-only">Status</dt>
+          <dd>
+            <Badge variant="outline">
+              {PIECE.STATUS.MAP[piece.status].label}
+            </Badge>
+          </dd>
+        </div>
 
         <div class="flex flex-wrap gap-x-5 gap-y-2">
-          <Icon
-            icon="lucide/brush"
-            label={piece.medium}
-          />
+          <div class="flex items-center gap-2">
+            <dt class="sr-only">Medium</dt>
+            <dd>
+              <Icon
+                icon="lucide/brush"
+                label={piece.medium}
+              />
+            </dd>
+          </div>
+
           {#if piece.style}
-            <Icon
-              icon="lucide/palette"
-              label={piece.style}
-            />
+            <div class="flex items-center gap-2">
+              <dt class="sr-only">Style</dt>
+              <dd>
+                <Icon
+                  icon="lucide/palette"
+                  label={piece.style}
+                />
+              </dd>
+            </div>
           {/if}
+
           {#if dimensions}
-            <Icon
-              icon="lucide/ruler-dimension-line"
-              label={dimensions}
-            />
+            <div class="flex items-center gap-2">
+              <dt class="sr-only">Dimensions</dt>
+              <dd>
+                <Icon
+                  icon="lucide/ruler-dimension-line"
+                  label={dimensions}
+                />
+              </dd>
+            </div>
           {/if}
+
           {#if piece.weight_kg}
-            <Icon
-              icon="lucide/weight"
-              label={Format.number(piece.weight_kg, {
-                style: "unit",
-                unit: "kilogram",
-                unitDisplay: "short",
-              })}
-            />
+            <div class="flex items-center gap-2">
+              <dt class="sr-only">Weight</dt>
+              <dd>
+                <Icon
+                  icon="lucide/weight"
+                  label={Format.number(piece.weight_kg, {
+                    style: "unit",
+                    unit: "kilogram",
+                    unitDisplay: "short",
+                  })}
+                />
+              </dd>
+            </div>
           {/if}
         </div>
-      </div>
+      </dl>
     {/snippet}
 
     {#snippet footer()}
-      <div class="flex flex-col gap-1">
-        <p>
-          <Anchor
-            icon="lucide/building"
-            href={resolve(
-              page.route.id?.startsWith("/s/")
-                ? "/s/gallery/[slug]"
-                : "/gallery/[slug]",
-              piece.gallery,
-            )}
-          >
-            {piece.gallery.name}
-          </Anchor>
-        </p>
+      <dl class="flex flex-col gap-1">
+        <div>
+          <dt class="sr-only">Gallery</dt>
+          <dd>
+            <Anchor
+              icon="lucide/building"
+              href={resolve(
+                page.route.id?.startsWith("/s/")
+                  ? "/s/gallery/[slug]"
+                  : "/gallery/[slug]",
+                piece.gallery,
+              )}
+            >
+              {piece.gallery.name}
+            </Anchor>
+          </dd>
+        </div>
 
         {#if piece.artist_name}
           <svelte:boundary>
             {@const artist = await get_artist_by_name_remote(piece.artist_name)}
 
             {#snippet pending()}
-              <Icon
-                icon="lucide/user"
-                label={piece.artist_name}
-              />
+              <div>
+                <dt class="sr-only">Artist</dt>
+                <dd>
+                  <Icon
+                    icon="lucide/user"
+                    label={piece.artist_name}
+                  />
+                </dd>
+              </div>
             {/snippet}
 
-            {#if artist}
-              <Anchor
-                icon="lucide/user"
-                href={resolve("/artist/[slug]", artist)}
-              >
-                {artist.name}
-              </Anchor>
-            {:else}
-              <Icon
-                icon="lucide/user"
-                label={piece.artist_name}
-              />
-            {/if}
+            <div>
+              <dt class="sr-only">Artist</dt>
+              <dd>
+                {#if artist}
+                  <Anchor
+                    icon="lucide/user"
+                    href={resolve("/artist/[slug]", artist)}
+                  >
+                    {artist.name}
+                  </Anchor>
+                {:else}
+                  <Icon
+                    icon="lucide/user"
+                    label={piece.artist_name}
+                  />
+                {/if}
+              </dd>
+            </div>
           </svelte:boundary>
         {/if}
-      </div>
+      </dl>
     {/snippet}
   </Card>
 </section>
@@ -190,7 +234,10 @@
 {/if}
 
 <footer id="meta">
-  <p class="text-sm text-muted-foreground">
-    Last updated: <Time date={piece.updatedAt} />
-  </p>
+  <dl class="text-sm text-muted-foreground">
+    <dt class="sr-only">Last updated</dt>
+    <dd>
+      Last updated: <Time date={piece.updatedAt} />
+    </dd>
+  </dl>
 </footer>

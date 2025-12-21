@@ -4,12 +4,15 @@
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import CardList from "$lib/components/ui/card/CardList.svelte";
   import Time from "$lib/components/ui/elements/Time.svelte";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { IHTML } from "$lib/utils/html/html.util";
   import { Url } from "$lib/utils/urls";
   import { parsePhoneNumberFromString as parse_phone_number } from "libphonenumber-js/min";
+  import type { ComponentProps } from "svelte";
+  import PieceCard from "../piece/PieceCard.svelte";
 
   let {
     gallery,
@@ -28,6 +31,8 @@
       | "updatedAt"
     > & {
       images: Pick<Image, "url" | "thumbhash">[];
+
+      pieces: ComponentProps<typeof PieceCard>["piece"][];
     };
 
     prerendered: {
@@ -113,6 +118,23 @@
     </Card>
   </section>
 {/if}
+
+<section id="pieces">
+  <h2>Pieces</h2>
+
+  <CardList
+    items={gallery.pieces}
+    empty={{
+      icon: "lucide/frame",
+      title: "No pieces",
+      description: "This gallery hasn't got any public pieces at the moment",
+    }}
+  >
+    {#snippet card(piece)}
+      <PieceCard {piece} />
+    {/snippet}
+  </CardList>
+</section>
 
 {#if gallery.google_place_id}
   <section id="location">

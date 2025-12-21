@@ -20,7 +20,11 @@
 
   const href = $derived(
     resolve(
-      page.route.id?.startsWith("/s/") ? "/s/piece/[slug]" : "/piece/[slug]",
+      page.route.id?.startsWith("/s/")
+        ? "/s/piece/[slug]"
+        : page.route.id?.startsWith("/admin/")
+          ? "/admin/piece/[slug]"
+          : "/piece/[slug]",
       piece,
     ),
   );
@@ -47,26 +51,31 @@
         </a>
       {/if}
 
-      <div>
-        <p>
+      <dl>
+        <dt class="sr-only">Medium</dt>
+        <dd>
           {piece.medium}
-        </p>
+        </dd>
+
         {#if piece.price}
-          <p>
+          <dt class="sr-only">Price</dt>
+          <dd>
             {Format.currency(piece.price)}
-          </p>
+          </dd>
         {/if}
+
         {#if piece.gallery}
-          <p>
+          <dt class="sr-only">Gallery</dt>
+          <dd>
             <Anchor
               icon="lucide/building"
               href={resolve("/s/gallery/[slug]", piece.gallery)}
             >
               {piece.gallery.name}
             </Anchor>
-          </p>
+          </dd>
         {/if}
-      </div>
+      </dl>
     </div>
   {/snippet}
 </Card>
