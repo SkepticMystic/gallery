@@ -67,6 +67,11 @@ export const ImageTable = pgTable(
 );
 
 export const image_relations = relations(ImageTable, ({ one }) => ({
+  org: one(OrganizationTable, {
+    fields: [ImageTable.org_id],
+    references: [OrganizationTable.id],
+  }),
+
   gallery: one(GalleryTable, {
     fields: [ImageTable.resource_id],
     references: [GalleryTable.id],

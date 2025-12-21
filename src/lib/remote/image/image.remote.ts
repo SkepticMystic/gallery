@@ -1,5 +1,9 @@
 import { command, form } from "$app/server";
+import { ERROR } from "$lib/const/error.const";
 import { IMAGE_HOSTING } from "$lib/const/image/image_hosting.const";
+import { db } from "$lib/server/db/drizzle.db";
+import { Repo } from "$lib/server/db/repos/index.repo";
+import { result } from "$lib/utils/result.util";
 import z from "zod";
 import { ImageSchema } from "../../server/db/models/image.model";
 import { get_seller_session, get_session } from "../../services/auth.service";
@@ -49,5 +53,28 @@ export const admin_set_image_approved_remote = command(
     await get_session({ admin: true });
 
     return await ImageService.set_admin_approved(input);
+  },
+);
+
+export const admin_delete_image_remote = command(
+  z.uuid(),
+  async (image_id: string) => {
+    await get_session({ admin: true });
+
+    const res = await Repo.query(
+      db.query.image.findFirst({
+        where: (image, { eq }) => eq(image.id, image_id),
+        columns: { id: true, org_id: true },
+      }),
+    );
+
+    if (!res.ok || !res.data) {
+      return result.err(ERROR.NOT_FOUND);
+    }
+
+    return await ImageService.delete_many({
+      id: image_id,
+      org_id: res.data.org_id,
+    });
   },
 );

@@ -19,6 +19,10 @@
       href: "/admin/organizations",
     },
     {
+      label: "Images",
+      href: "/admin/image",
+    },
+    {
       label: "Galleries",
       href: "/admin/gallery",
     },

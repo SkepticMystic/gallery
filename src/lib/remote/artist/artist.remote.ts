@@ -1,9 +1,12 @@
-import { query } from "$app/server";
+import { command, query } from "$app/server";
 import { query_schema } from "$lib/schema/query/query.schema";
 import { db } from "$lib/server/db/drizzle.db";
+import { ArtistTable } from "$lib/server/db/models/artist.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
+import { get_session } from "$lib/services/auth.service";
 import { ArtistUtil } from "$lib/utils/artist/artist.util";
 import { Log } from "$lib/utils/logger.util";
+import { eq } from "drizzle-orm";
 import z from "zod";
 
 export const get_artist_by_name_remote = query.batch(
@@ -113,5 +116,31 @@ export const search_artists_remote = query(
     Log.debug(artists, "search_artists_remote.res");
 
     return artists;
+  },
+);
+
+export const admin_delete_artist_remote = command(
+  z.uuid(), //
+  async (artist_id) => {
+    await get_session({ admin: true });
+
+    return await Repo.delete_one(
+      db.delete(ArtistTable).where(eq(ArtistTable.id, artist_id)).execute(),
+    );
+  },
+);
+
+export const admin_approve_artist_remote = command(
+  z.object({ id: z.uuid(), is_approved: z.boolean() }),
+  async (input) => {
+    await get_session({ admin: true });
+
+    return await Repo.update_one(
+      db
+        .update(ArtistTable)
+        .set({ is_approved: input.is_approved })
+        .where(eq(ArtistTable.id, input.id))
+        .returning(),
+    );
   },
 );

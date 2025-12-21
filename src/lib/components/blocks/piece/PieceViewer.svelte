@@ -91,44 +91,44 @@
 <section id="info">
   <Card title="Info">
     {#snippet content()}
-      <p class="text-xl font-medium">
-        {piece.price ? Format.currency(piece.price) : "No price"}
-      </p>
+      <div class="space-y-3">
+        <p class="text-xl font-medium">
+          {piece.price ? Format.currency(piece.price) : "No price"}
+        </p>
 
-      <p>
         <Badge variant="outline">
           {PIECE.STATUS.MAP[piece.status].label}
         </Badge>
-      </p>
 
-      <p>
-        <Icon icon="lucide/brush" />
-        {piece.medium}
-      </p>
-      {#if piece.style}
-        <p>
-          <Icon icon="lucide/palette" />
-          {piece.style}
-        </p>
-      {/if}
-
-      {#if dimensions}
-        <p>
-          <Icon icon="lucide/ruler-dimension-line" />
-          {dimensions}
-        </p>
-      {/if}
-
-      {#if piece.weight_kg}
-        <p>
-          <Icon icon="lucide/weight" />
-          {Format.number(piece.weight_kg, {
-            style: "unit",
-            unit: "kilogram",
-            unitDisplay: "short",
-          })}
-        </p>
-      {/if}
+        <div class="flex flex-wrap gap-x-5 gap-y-2">
+          <Icon
+            icon="lucide/brush"
+            label={piece.medium}
+          />
+          {#if piece.style}
+            <Icon
+              icon="lucide/palette"
+              label={piece.style}
+            />
+          {/if}
+          {#if dimensions}
+            <Icon
+              icon="lucide/ruler-dimension-line"
+              label={dimensions}
+            />
+          {/if}
+          {#if piece.weight_kg}
+            <Icon
+              icon="lucide/weight"
+              label={Format.number(piece.weight_kg, {
+                style: "unit",
+                unit: "kilogram",
+                unitDisplay: "short",
+              })}
+            />
+          {/if}
+        </div>
+      </div>
     {/snippet}
 
     {#snippet footer()}

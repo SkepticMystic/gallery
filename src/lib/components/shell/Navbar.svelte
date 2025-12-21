@@ -98,7 +98,7 @@
 </script>
 
 <nav
-  class="mx-auto flex h-16 max-w-4xl items-center justify-between px-3 sm:px-0"
+  class="mx-auto flex h-16 max-w-4xl items-center justify-between px-3 lg:px-0"
 >
   <ButtonGroup>
     <Button

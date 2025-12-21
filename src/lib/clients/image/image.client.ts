@@ -1,5 +1,6 @@
 import { thumbHashToDataURL } from "thumbhash";
 import {
+  admin_delete_image_remote,
   admin_set_image_approved_remote,
   delete_image_remote,
 } from "../../remote/image/image.remote";
@@ -12,6 +13,13 @@ export const ImageClient = {
       "Are you sure you want to delete this image? This action cannot be undone.",
     suc_msg: "Image deleted",
   }),
+
+  admin_delete: Client.wrap(
+    (image_id: string) => admin_delete_image_remote(image_id),
+    {
+      confirm: "Are you sure you want to delete this image?",
+    },
+  ),
 
   // SOURCE: https://github.com/evanw/thumbhash/blob/main/examples/browser/index.html
   decode_thumbhash: (image?: Pick<Image, "thumbhash">) =>
