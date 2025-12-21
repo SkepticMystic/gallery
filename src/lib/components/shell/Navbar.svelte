@@ -104,7 +104,7 @@
     <Button
       href="/"
       size="lg"
-      variant="link"
+      variant="ghost"
     >
       <Logo />
       {APP.NAME}
@@ -118,7 +118,7 @@
 
     <ButtonGroup>
       <DropdownMenu
-        variant="outline"
+        variant="ghost"
         title="Open menu"
         items={[
           {

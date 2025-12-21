@@ -6,6 +6,7 @@
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Badge from "$lib/components/ui/badge/badge.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import TermDescription from "$lib/components/ui/element/TermDescription.svelte";
   import Time from "$lib/components/ui/elements/Time.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
   import { PIECE } from "$lib/const/piece/piece.const";
@@ -93,83 +94,76 @@
   <Card title="Info">
     {#snippet content()}
       <dl class="space-y-3">
-        <div>
-          <dt class="sr-only">Price</dt>
-          <dd class="text-xl font-medium">
-            {piece.price ? Format.currency(piece.price) : "No price"}
-          </dd>
+        <div class="flex flex-wrap gap-x-7">
+          <TermDescription
+            sr_only
+            term="Price"
+          >
+            {#snippet description()}
+              <span class="text-xl font-medium">
+                {piece.price ? Format.currency(piece.price) : "No price"}
+              </span>
+            {/snippet}
+          </TermDescription>
+
+          <TermDescription
+            sr_only
+            term="Status"
+          >
+            {#snippet description()}
+              <Badge variant="outline">
+                {PIECE.STATUS.MAP[piece.status].label}
+              </Badge>
+            {/snippet}
+          </TermDescription>
         </div>
 
-        <div>
-          <dt class="sr-only">Status</dt>
-          <dd>
-            <Badge variant="outline">
-              {PIECE.STATUS.MAP[piece.status].label}
-            </Badge>
-          </dd>
-        </div>
-
-        <div class="flex flex-wrap gap-x-5 gap-y-2">
-          <div class="flex items-center gap-2">
-            <dt class="sr-only">Medium</dt>
-            <dd>
-              <Icon
-                icon="lucide/brush"
-                label={piece.medium}
-              />
-            </dd>
-          </div>
+        <div class="grid gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
+          <TermDescription
+            term="Medium"
+            icon="lucide/brush"
+            description={piece.medium}
+          />
 
           {#if piece.style}
-            <div class="flex items-center gap-2">
-              <dt class="sr-only">Style</dt>
-              <dd>
-                <Icon
-                  icon="lucide/palette"
-                  label={piece.style}
-                />
-              </dd>
-            </div>
+            <TermDescription
+              term="Style"
+              icon="lucide/palette"
+              description={piece.style}
+            />
           {/if}
 
           {#if dimensions}
-            <div class="flex items-center gap-2">
-              <dt class="sr-only">Dimensions</dt>
-              <dd>
-                <Icon
-                  icon="lucide/ruler-dimension-line"
-                  label={dimensions}
-                />
-              </dd>
-            </div>
+            <TermDescription
+              term="Dimensions"
+              icon="lucide/ruler-dimension-line"
+              description={dimensions}
+            />
           {/if}
 
           {#if piece.weight_kg}
-            <div class="flex items-center gap-2">
-              <dt class="sr-only">Weight</dt>
-              <dd>
-                <Icon
-                  icon="lucide/weight"
-                  label={Format.number(piece.weight_kg, {
-                    style: "unit",
-                    unit: "kilogram",
-                    unitDisplay: "short",
-                  })}
-                />
-              </dd>
-            </div>
+            <TermDescription
+              term="Weight"
+              icon="lucide/weight"
+              description={Format.number(piece.weight_kg, {
+                style: "unit",
+                unit: "kilogram",
+                unitDisplay: "short",
+              })}
+            />
           {/if}
         </div>
       </dl>
     {/snippet}
 
     {#snippet footer()}
-      <dl class="flex flex-col gap-1">
-        <div>
-          <dt class="sr-only">Gallery</dt>
-          <dd>
+      <dl class="grid w-full gap-x-4 gap-y-2 lg:grid-cols-2">
+        <TermDescription
+          term="Gallery"
+          icon="lucide/building"
+        >
+          {#snippet description()}
             <Anchor
-              icon="lucide/building"
               href={resolve(
                 page.route.id?.startsWith("/s/")
                   ? "/s/gallery/[slug]"
@@ -179,43 +173,35 @@
             >
               {piece.gallery.name}
             </Anchor>
-          </dd>
-        </div>
+          {/snippet}
+        </TermDescription>
 
         {#if piece.artist_name}
           <svelte:boundary>
             {@const artist = await get_artist_by_name_remote(piece.artist_name)}
 
             {#snippet pending()}
-              <div>
-                <dt class="sr-only">Artist</dt>
-                <dd>
-                  <Icon
-                    icon="lucide/user"
-                    label={piece.artist_name}
-                  />
-                </dd>
-              </div>
+              <TermDescription
+                term="Artist"
+                icon="lucide/user"
+                description={piece.artist_name}
+              />
             {/snippet}
 
-            <div>
-              <dt class="sr-only">Artist</dt>
-              <dd>
+            <TermDescription
+              term="Artist"
+              icon="lucide/user"
+            >
+              {#snippet description()}
                 {#if artist}
-                  <Anchor
-                    icon="lucide/user"
-                    href={resolve("/artist/[slug]", artist)}
-                  >
+                  <Anchor href={resolve("/artist/[slug]", artist)}>
                     {artist.name}
                   </Anchor>
                 {:else}
-                  <Icon
-                    icon="lucide/user"
-                    label={piece.artist_name}
-                  />
+                  <Icon label={piece.artist_name} />
                 {/if}
-              </dd>
-            </div>
+              {/snippet}
+            </TermDescription>
           </svelte:boundary>
         {/if}
       </dl>
@@ -235,9 +221,13 @@
 
 <footer id="meta">
   <dl class="text-sm text-muted-foreground">
-    <dt class="sr-only">Last updated</dt>
-    <dd>
-      Last updated: <Time date={piece.updatedAt} />
-    </dd>
+    <TermDescription
+      class="flex-row"
+      term="Last updated"
+    >
+      {#snippet description()}
+        <Time date={piece.updatedAt} />
+      {/snippet}
+    </TermDescription>
   </dl>
 </footer>
