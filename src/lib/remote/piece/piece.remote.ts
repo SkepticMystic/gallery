@@ -7,8 +7,19 @@ import { Repo } from "$lib/server/db/repos/index.repo";
 import { get_seller_session } from "$lib/services/auth.service";
 import { PieceService } from "$lib/services/piece/piece.service";
 import { error, invalid, redirect } from "@sveltejs/kit";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import z from "zod";
+
+export const count_public_pieces_remote = query(async () => {
+  const res = await Repo.query(
+    db
+      .select({ count: count(PieceTable.id) })
+      .from(PieceTable)
+      .where(eq(PieceTable.is_published, true)),
+  );
+
+  return res.ok ? (res.data.at(0)?.count ?? 0) : 0;
+});
 
 export const list_my_pieces_remote = query(async () => {
   const { session } = await get_seller_session();

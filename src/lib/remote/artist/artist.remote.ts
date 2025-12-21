@@ -6,8 +6,19 @@ import { Repo } from "$lib/server/db/repos/index.repo";
 import { get_session } from "$lib/services/auth.service";
 import { ArtistUtil } from "$lib/utils/artist/artist.util";
 import { Log } from "$lib/utils/logger.util";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import z from "zod";
+
+export const count_public_artists_remote = query(async () => {
+  const res = await Repo.query(
+    db
+      .select({ count: count(ArtistTable.id) })
+      .from(ArtistTable)
+      .where(eq(ArtistTable.is_approved, true)),
+  );
+
+  return res.ok ? (res.data.at(0)?.count ?? 0) : 0;
+});
 
 export const get_artist_by_name_remote = query.batch(
   z.string().transform(ArtistUtil.normalise_name),

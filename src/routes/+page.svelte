@@ -1,6 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import FeaturesBlock from "$lib/components/blocks/app/FeaturesBlock.svelte";
+  import StatsBlock from "$lib/components/blocks/app/StatsBlock.svelte";
   import GalleryItem from "$lib/components/blocks/gallery/GalleryItem.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -56,10 +57,10 @@
     <h2>About</h2>
     <FeaturesBlock />
   </section>
-  <!-- 
+
   <section id="stats">
     <StatsBlock />
-  </section> -->
+  </section>
 
   <section id="contact">
     <h2>Interested?</h2>

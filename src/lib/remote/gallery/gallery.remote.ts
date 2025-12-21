@@ -10,7 +10,7 @@ import { get_seller_session, get_session } from "$lib/services/auth.service";
 import { GalleryService } from "$lib/services/gallery/gallery.service";
 import { result } from "$lib/utils/result.util";
 import { invalid, redirect } from "@sveltejs/kit";
-import { and, eq, sql } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import z from "zod";
 
 export const get_random_public_gallery_remote = query(async () => {
@@ -25,6 +25,17 @@ export const get_random_public_gallery_remote = query(async () => {
   );
 
   return res.ok ? result.suc(res.data.at(0)) : result.err(res.error);
+});
+
+export const count_public_galleries_remote = query(async () => {
+  const res = await Repo.query(
+    db
+      .select({ count: count(GalleryTable.id) })
+      .from(GalleryTable)
+      .where(eq(GalleryTable.admin_approved, true)),
+  );
+
+  return res.ok ? (res.data.at(0)?.count ?? 0) : 0;
 });
 
 export const list_my_galleries_remote = query(async () => {
