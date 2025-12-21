@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ArtistClient } from "$lib/clients/artist/artist.client.js";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import DataTable from "$lib/components/ui/data-table/data-table.svelte";
   import Field from "$lib/components/ui/field/Field.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
@@ -61,7 +62,16 @@
 
 <article>
   <header>
-    <h1>Artists</h1>
+    <div class="space-y-2">
+      <h1>Artists</h1>
+
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Admin
+      </Anchor>
+    </div>
   </header>
 
   <DataTable

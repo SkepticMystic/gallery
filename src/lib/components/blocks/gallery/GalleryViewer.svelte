@@ -4,6 +4,7 @@
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import Time from "$lib/components/ui/elements/Time.svelte";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { IHTML } from "$lib/utils/html/html.util";
@@ -128,6 +129,6 @@
   <h2 class="sr-only">Meta</h2>
 
   <p class="text-sm text-muted-foreground">
-    Last updated: {gallery.updatedAt.toLocaleString()}
+    Last updated: <Time date={gallery.updatedAt} />
   </p>
 </footer>

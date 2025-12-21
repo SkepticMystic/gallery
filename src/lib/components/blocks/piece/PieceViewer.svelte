@@ -6,6 +6,7 @@
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Badge from "$lib/components/ui/badge/badge.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import Time from "$lib/components/ui/elements/Time.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
   import { PIECE } from "$lib/const/piece/piece.const";
   import { get_artist_by_name_remote } from "$lib/remote/artist/artist.remote";
@@ -190,6 +191,6 @@
 
 <footer id="meta">
   <p class="text-sm text-muted-foreground">
-    Last updated: {piece.updatedAt.toLocaleString()}
+    Last updated: <Time date={piece.updatedAt} />
   </p>
 </footer>

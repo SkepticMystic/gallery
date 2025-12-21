@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { GalleryClient } from "$lib/clients/gallery/gallery.client.js";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import DataTable from "$lib/components/ui/data-table/data-table.svelte";
+  import { renderComponent } from "$lib/components/ui/data-table/render-helpers.js";
   import Field from "$lib/components/ui/field/Field.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { Format } from "$lib/utils/format.util.js";
@@ -16,6 +19,12 @@
   const columns = [
     column.accessor("name", {
       meta: { label: "Name" },
+
+      cell: ({ row, getValue }) =>
+        renderComponent(Anchor, {
+          content: getValue(),
+          href: resolve("/admin/gallery/[slug]", row.original),
+        }),
 
       footer: ({ table }) =>
         Format.number(table.getRowModel().flatRows.length) + " galleries",
@@ -69,7 +78,16 @@
 
 <article>
   <header>
-    <h1>Galleries</h1>
+    <div class="space-y-2">
+      <h1>Galleries</h1>
+
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Admin
+      </Anchor>
+    </div>
   </header>
 
   <DataTable

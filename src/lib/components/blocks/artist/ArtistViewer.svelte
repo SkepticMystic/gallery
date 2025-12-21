@@ -3,6 +3,7 @@
   import PrerenderedMarkdown from "$lib/components/text/markdown/PrerenderedMarkdown.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
   import CardList from "$lib/components/ui/card/CardList.svelte";
+  import Time from "$lib/components/ui/elements/Time.svelte";
   import type { Artist } from "$lib/server/db/models/artist.model";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
@@ -82,6 +83,6 @@
   <h2 class="sr-only">Meta</h2>
 
   <p class="text-sm text-muted-foreground">
-    Last updated: {artist.updatedAt.toLocaleString()}
+    Last updated: <Time date={artist.updatedAt} />
   </p>
 </footer>

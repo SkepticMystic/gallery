@@ -1,5 +1,6 @@
 <script lang="ts">
   import { AdminClient } from "$lib/clients/auth/admin.client.js";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import UserAvatar from "$lib/components/ui/avatar/UserAvatar.svelte";
   import DataTable from "$lib/components/ui/data-table/data-table.svelte";
   import { renderComponent } from "$lib/components/ui/data-table/render-helpers.js";
@@ -90,7 +91,16 @@
 
 <article>
   <header>
-    <h1>Users</h1>
+    <div class="space-y-2">
+      <h1>Users</h1>
+
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Admin
+      </Anchor>
+    </div>
   </header>
 
   <DataTable

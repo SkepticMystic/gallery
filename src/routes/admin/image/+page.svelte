@@ -1,8 +1,10 @@
 <script lang="ts">
   import { ImageClient } from "$lib/clients/image/image.client.js";
   import Picture from "$lib/components/image/Picture.svelte";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import DataTable from "$lib/components/ui/data-table/data-table.svelte";
   import { renderComponent } from "$lib/components/ui/data-table/render-helpers.js";
+  import Span from "$lib/components/ui/element/Span.svelte";
   import Field from "$lib/components/ui/field/Field.svelte";
   import { format_bytes } from "$lib/components/ui/file-drop-zone/index.js";
   import Input from "$lib/components/ui/input/input.svelte";
@@ -43,17 +45,29 @@
 
     column.accessor("resource_kind", {
       meta: { label: "Resource Type" },
+
+      cell: ({ getValue }) => RESOURCES.KIND.MAP[getValue()].label,
     }),
 
-    column.accessor((row) => `${row.width}x${row.height}`, {
+    column.display({
       id: "dimensions",
       meta: { label: "Dimensions" },
+
+      cell: ({ row }) =>
+        renderComponent(Span, {
+          content: `${row.original.width}x${row.original.height}`,
+          class: "text-sm text-muted-foreground font-mono",
+        }),
     }),
 
     column.accessor("size", {
       meta: { label: "Size" },
 
-      cell: ({ getValue }) => format_bytes(getValue()),
+      cell: ({ getValue }) =>
+        renderComponent(Span, {
+          content: format_bytes(getValue()),
+          class: "text-sm text-muted-foreground font-mono",
+        }),
     }),
 
     column.accessor("admin_approved", {
@@ -93,7 +107,16 @@
 
 <article>
   <header>
-    <h1>Images</h1>
+    <div class="space-y-2">
+      <h1>Images</h1>
+
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Admin
+      </Anchor>
+    </div>
   </header>
 
   <DataTable

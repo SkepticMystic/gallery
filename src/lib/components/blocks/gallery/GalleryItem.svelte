@@ -26,7 +26,9 @@
     resolve(
       page.route.id?.startsWith("/s/")
         ? "/s/gallery/[slug]"
-        : "/gallery/[slug]",
+        : page.route.id?.startsWith("/admin/")
+          ? "/admin/gallery/[slug]"
+          : "/gallery/[slug]",
       gallery,
     ),
   );

@@ -26,6 +26,10 @@
       label: "Galleries",
       href: "/admin/gallery",
     },
+    {
+      label: "Artists",
+      href: "/admin/artist",
+    },
   ];
 </script>
 
