@@ -4,6 +4,7 @@
   import Picture from "$lib/components/image/Picture.svelte";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import TermDescription from "$lib/components/ui/element/TermDescription.svelte";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { Piece } from "$lib/server/db/models/piece.model";
@@ -52,28 +53,33 @@
       {/if}
 
       <dl>
-        <dt class="sr-only">Medium</dt>
-        <dd>
-          {piece.medium}
-        </dd>
+        <TermDescription
+          sr_only
+          term="Medium"
+          description={piece.medium}
+        />
 
         {#if piece.price}
-          <dt class="sr-only">Price</dt>
-          <dd>
-            {Format.currency(piece.price)}
-          </dd>
+          <TermDescription
+            sr_only
+            term="Price"
+            description={Format.currency(piece.price)}
+          />
         {/if}
 
         {#if piece.gallery}
-          <dt class="sr-only">Gallery</dt>
-          <dd>
-            <Anchor
-              icon="lucide/building"
-              href={resolve("/s/gallery/[slug]", piece.gallery)}
-            >
-              {piece.gallery.name}
-            </Anchor>
-          </dd>
+          {@const { gallery } = piece}
+
+          <TermDescription
+            sr_only
+            term="Gallery"
+          >
+            {#snippet description()}
+              <Anchor href={resolve("/s/gallery/[slug]", gallery)}>
+                {gallery.name}
+              </Anchor>
+            {/snippet}
+          </TermDescription>
         {/if}
       </dl>
     </div>
