@@ -44,7 +44,7 @@
     <h2>Featured</h2>
 
     {#if !featured_gallery.current}
-      <Skeleton class="h-32 w-full" />
+      <Skeleton class="h-24 w-full" />
     {:else if featured_gallery.current.ok}
       <GalleryItem
         variant="outline"

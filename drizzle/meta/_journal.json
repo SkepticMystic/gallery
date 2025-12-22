@@ -8,6 +8,13 @@
       "when": 1766217968458,
       "tag": "0000_abnormal_iron_fist",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766395759839,
+      "tag": "0001_next_corsair",
+      "breakpoints": true
     }
   ]
 }
