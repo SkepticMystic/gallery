@@ -7,6 +7,7 @@ export const load = (async () => {
   const galleries = await Repo.query(
     db.query.gallery.findMany({
       where: (gallery, { eq }) => eq(gallery.admin_approved, true),
+      orderBy: (gallery, { desc }) => [desc(gallery.createdAt)],
 
       columns: {
         id: true,
@@ -16,8 +17,6 @@ export const load = (async () => {
         google_place_id: true,
         formatted_address: true,
       },
-
-      orderBy: (gallery, { desc }) => [desc(gallery.createdAt)],
     }),
   );
 

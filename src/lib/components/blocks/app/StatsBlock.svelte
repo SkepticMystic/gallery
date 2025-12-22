@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
   import { count_public_artists_remote } from "$lib/remote/artist/artist.remote";
   import { count_public_galleries_remote } from "$lib/remote/gallery/gallery.remote";
@@ -11,7 +12,10 @@
 </script>
 
 <div class="grid gap-x-4 gap-y-4 sm:grid-cols-3">
-  <div class="flex flex-col items-center gap-y-2">
+  <a
+    href={resolve("/gallery")}
+    class="flex flex-col items-center gap-y-2"
+  >
     <p class="text-4xl font-medium">
       {#if galleries.current === undefined}
         <Skeleton class="h-9 w-12" />
@@ -21,9 +25,12 @@
     </p>
 
     <p>Galleries</p>
-  </div>
+  </a>
 
-  <div class="flex flex-col items-center gap-y-2">
+  <a
+    href={resolve("/artist")}
+    class="flex flex-col items-center gap-y-2"
+  >
     <p class="text-4xl font-medium">
       {#if artists.current === undefined}
         <Skeleton class="h-9 w-12" />
@@ -33,9 +40,12 @@
     </p>
 
     <p>Artists</p>
-  </div>
+  </a>
 
-  <div class="flex flex-col items-center gap-y-2">
+  <a
+    href={resolve("/piece")}
+    class="flex flex-col items-center gap-y-2"
+  >
     <p class="text-4xl font-medium">
       {#if pieces.current === undefined}
         <Skeleton class="h-9 w-12" />
@@ -45,5 +55,5 @@
     </p>
 
     <p>Pieces</p>
-  </div>
+  </a>
 </div>

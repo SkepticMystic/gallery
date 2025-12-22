@@ -5,6 +5,7 @@
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
   import TermDescription from "$lib/components/ui/element/TermDescription.svelte";
+  import Icon from "$lib/components/ui/icon/Icon.svelte";
   import { get_artist_by_name_remote } from "$lib/remote/artist/artist.remote";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
@@ -96,7 +97,10 @@
             term="Gallery"
           >
             {#snippet description()}
-              <Anchor href={gallery_href}>
+              <Anchor
+                icon="lucide/building"
+                href={gallery_href}
+              >
                 {gallery.name}
               </Anchor>
             {/snippet}
@@ -118,15 +122,20 @@
             <TermDescription
               sr_only
               term="Artist"
-              icon="lucide/user"
             >
               {#snippet description()}
                 {#if artist}
-                  <Anchor href={resolve("/artist/[slug]", artist)}>
+                  <Anchor
+                    icon="lucide/user"
+                    href={resolve("/artist/[slug]", artist)}
+                  >
                     {artist.name}
                   </Anchor>
                 {:else}
-                  {piece.artist_name}
+                  <Icon
+                    icon="lucide/user"
+                    label={piece.artist_name}
+                  />
                 {/if}
               {/snippet}
             </TermDescription>

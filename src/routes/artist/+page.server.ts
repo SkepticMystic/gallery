@@ -7,14 +7,13 @@ export const load = (async () => {
   const artists = await Repo.query(
     db.query.artist.findMany({
       where: (artist, { eq }) => eq(artist.is_approved, true),
+      orderBy: (artist, { asc }) => [asc(artist.normalized_name)],
 
       columns: {
         id: true,
         name: true,
         slug: true,
       },
-
-      orderBy: (artist, { asc }) => [asc(artist.normalized_name)],
     }),
   );
 

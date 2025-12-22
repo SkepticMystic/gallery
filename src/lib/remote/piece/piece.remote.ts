@@ -118,6 +118,7 @@ const piece_query_schema = query_schema(
   }),
 );
 
+// TODO: This doesn't check that the corresponding gallery is_approved
 export const search_published_pieces_remote = query(
   piece_query_schema,
   async (input) => {

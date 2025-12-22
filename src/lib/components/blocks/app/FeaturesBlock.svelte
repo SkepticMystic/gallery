@@ -2,8 +2,6 @@
   import Card from "$lib/components/ui/card/Card.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
 
-  // TODO
-  // Customer-facing feature cards
   const FEATURES: {
     icon: string;
     title: string;
@@ -11,20 +9,22 @@
     description?: string;
   }[] = [
     {
-      icon: "lucide/map-pin",
-      title: "Locally Owned",
+      icon: "lucide/gallery-horizontal",
+      title: "Showcase Your Collection",
       content:
-        "All gallery owners live in the same area they operate, so you can be sure that your support feeds back into your community.",
+        "Display your gallery's artwork with beautiful, organized listings. Upload images, add details, and create a stunning online presence.",
     },
     {
-      icon: "lucide/thumbs-up",
-      title: "Publicly Rated",
-      content: "See ratings and reviews of a gallery.",
+      icon: "lucide/map-pin",
+      title: "Connect with Collectors",
+      content:
+        "Make it easy for art enthusiasts to discover your gallery and inquire about pieces. Build relationships with collectors in your area.",
     },
     {
-      icon: "lucide/users",
-      title: "Community Supported",
-      content: "Get help from other gallery owners in your area.",
+      icon: "lucide/sparkles",
+      title: "Manage with Ease",
+      content:
+        "Update your inventory, track inquiries, and manage multiple galleries from one simple dashboard. Focus on art, not administration.",
     },
   ];
 </script>
