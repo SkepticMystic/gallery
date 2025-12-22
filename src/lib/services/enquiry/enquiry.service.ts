@@ -21,7 +21,7 @@ const create = async (
     const [session, resource] = await Promise.all([
       safe_get_session(),
 
-      ResourceService.get_by_kind_and_id({
+      ResourceService.get_by_key({
         resource_id: input.resource_id,
         resource_kind: input.resource_kind,
       }),

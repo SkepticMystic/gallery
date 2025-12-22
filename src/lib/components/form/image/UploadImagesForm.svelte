@@ -6,8 +6,8 @@
     format_bytes,
     type FileDropZoneProps,
   } from "$lib/components/ui/file-drop-zone";
-  import type { ResourceKind } from "$lib/const/resource/resource.const";
   import { upload_images_remote } from "$lib/remote/image/image.remote";
+  import type { ResourceKey } from "$lib/schema/resource/resource.schema";
   import { onDestroy } from "svelte";
   import { toast } from "svelte-sonner";
   import { SvelteMap } from "svelte/reactivity";
@@ -16,9 +16,7 @@
     resource_id,
     resource_kind,
     after_upload,
-  }: {
-    resource_id: string;
-    resource_kind: ResourceKind;
+  }: ResourceKey & {
     after_upload?: (results: NonNullable<typeof form.result>) => void;
   } = $props();
 

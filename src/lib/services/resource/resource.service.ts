@@ -1,15 +1,12 @@
 import { ERROR } from "$lib/const/error.const";
+import type { ResourceKey } from "$lib/schema/resource/resource.schema";
 import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import type { ResourceKind } from "../../const/resource/resource.const";
 import { Log } from "../../utils/logger.util";
 import { result } from "../../utils/result.util";
 
 // WARN: Does not check org_id!
-const get_by_kind_and_id = async (input: {
-  resource_id: string;
-  resource_kind: ResourceKind;
-}) => {
+const get_by_key = async (input: ResourceKey) => {
   switch (input.resource_kind) {
     case "gallery": {
       const res = await Repo.query(
@@ -53,5 +50,5 @@ const get_by_kind_and_id = async (input: {
 };
 
 export const ResourceService = {
-  get_by_kind_and_id,
+  get_by_key,
 };

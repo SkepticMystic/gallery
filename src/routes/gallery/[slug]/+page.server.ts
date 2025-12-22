@@ -66,7 +66,12 @@ export const load = (async ({ params }) => {
       : null,
   };
 
-  waitUntil(PageViewService.create({ page_key: `gallery:${gallery.data.id}` }));
+  waitUntil(
+    PageViewService.create({
+      resource_kind: "gallery",
+      resource_id: gallery.data.id,
+    }),
+  );
 
   return {
     prerendered,

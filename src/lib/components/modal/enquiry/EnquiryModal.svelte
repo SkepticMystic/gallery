@@ -2,15 +2,9 @@
   import EnquiryForm from "$lib/components/form/enquiry/EnquiryForm.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import Modal from "$lib/components/ui/modal/modal.svelte";
-  import type { ResourceKind } from "$lib/const/resource/resource.const";
+  import type { ResourceKey } from "$lib/schema/resource/resource.schema";
 
-  let {
-    resource_id,
-    resource_kind,
-  }: {
-    resource_id: string;
-    resource_kind: ResourceKind;
-  } = $props();
+  let { resource_id, resource_kind }: ResourceKey = $props();
 </script>
 
 <Modal

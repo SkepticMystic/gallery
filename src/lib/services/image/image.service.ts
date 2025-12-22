@@ -75,7 +75,7 @@ export const ImageService = {
 
       const [count_limit, resource] = await Promise.all([
         check_count_limit(input),
-        ResourceService.get_by_kind_and_id(input),
+        ResourceService.get_by_key(input),
       ]);
 
       if (!resource.ok || resource.data.org_id !== input.org_id) {

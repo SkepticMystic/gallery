@@ -3,8 +3,8 @@
   import Field from "$lib/components/ui/field/Field.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
-  import type { ResourceKind } from "$lib/const/resource/resource.const";
   import { create_enquiry_remote } from "$lib/remote/enquiry/enquiry.remote";
+  import type { ResourceKey } from "$lib/schema/resource/resource.schema";
   import { session } from "$lib/stores/session.store";
   import { onDestroy } from "svelte";
   import { toast } from "svelte-sonner";
@@ -14,9 +14,7 @@
     resource_id,
     resource_kind,
     on_success,
-  }: {
-    resource_id: string;
-    resource_kind: ResourceKind;
+  }: ResourceKey & {
     on_success?: () => void;
   } = $props();
 

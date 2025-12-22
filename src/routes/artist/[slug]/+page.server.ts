@@ -81,7 +81,12 @@ export const load = (async ({ params }) => {
       : null,
   };
 
-  waitUntil(PageViewService.create({ page_key: `artist:${artist.data.id}` }));
+  waitUntil(
+    PageViewService.create({
+      resource_kind: "artist",
+      resource_id: artist.data.id,
+    }),
+  );
 
   return {
     prerendered,

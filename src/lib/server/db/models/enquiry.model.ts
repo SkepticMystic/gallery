@@ -47,7 +47,7 @@ const refinements = {
     .min(1, "Please enter a message")
     .max(5000, "Message must be at most 5000 characters"),
 
-  resource_id: z.string().trim().min(1),
+  resource_id: z.uuid(),
   resource_kind: z.enum(RESOURCES.KIND.IDS),
 };
 
