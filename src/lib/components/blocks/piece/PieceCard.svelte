@@ -5,6 +5,7 @@
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
   import TermDescription from "$lib/components/ui/element/TermDescription.svelte";
+  import { get_artist_by_name_remote } from "$lib/remote/artist/artist.remote";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { Piece } from "$lib/server/db/models/piece.model";
@@ -13,7 +14,10 @@
   let {
     piece,
   }: {
-    piece: Pick<Piece, "id" | "name" | "slug" | "medium" | "price"> & {
+    piece: Pick<
+      Piece,
+      "id" | "name" | "slug" | "medium" | "price" | "artist_name"
+    > & {
       gallery?: Pick<Gallery, "name" | "slug">;
       images: Pick<Image, "url" | "thumbhash">[];
     };
@@ -97,6 +101,36 @@
               </Anchor>
             {/snippet}
           </TermDescription>
+        {/if}
+
+        {#if piece.artist_name}
+          <svelte:boundary>
+            {@const artist = await get_artist_by_name_remote(piece.artist_name)}
+
+            {#snippet pending()}
+              <TermDescription
+                term="Artist"
+                icon="lucide/user"
+                description={piece.artist_name}
+              />
+            {/snippet}
+
+            <TermDescription
+              sr_only
+              term="Artist"
+              icon="lucide/user"
+            >
+              {#snippet description()}
+                {#if artist}
+                  <Anchor href={resolve("/artist/[slug]", artist)}>
+                    {artist.name}
+                  </Anchor>
+                {:else}
+                  {piece.artist_name}
+                {/if}
+              {/snippet}
+            </TermDescription>
+          </svelte:boundary>
         {/if}
       </dl>
     </div>

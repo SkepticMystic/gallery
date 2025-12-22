@@ -204,7 +204,6 @@
           <ArtistAutocomplete
             {...props}
             {...field?.as("text")}
-            required
             class="sm:min-w-[300px]"
           />
         {/snippet}
