@@ -23,6 +23,7 @@ export const load = (async ({ params }) => {
       with: {
         gallery: {
           columns: {
+            id: true,
             name: true,
             slug: true,
             admin_approved: true,

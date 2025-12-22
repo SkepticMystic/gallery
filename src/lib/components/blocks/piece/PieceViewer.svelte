@@ -6,17 +6,22 @@
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Badge from "$lib/components/ui/badge/badge.svelte";
   import Card from "$lib/components/ui/card/Card.svelte";
+  import CardList from "$lib/components/ui/card/CardList.svelte";
   import TermDescription from "$lib/components/ui/element/TermDescription.svelte";
   import Time from "$lib/components/ui/elements/Time.svelte";
   import Icon from "$lib/components/ui/icon/Icon.svelte";
+  import Skeleton from "$lib/components/ui/skeleton/skeleton.svelte";
   import { PIECE } from "$lib/const/piece/piece.const";
   import { get_artist_by_name_remote } from "$lib/remote/artist/artist.remote";
+  import { search_published_pieces_remote } from "$lib/remote/piece/piece.remote";
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { Piece } from "$lib/server/db/models/piece.model";
   import { Format } from "$lib/utils/format.util.js";
   import type { IHTML } from "$lib/utils/html/html.util";
   import { PieceUtil } from "$lib/utils/piece/piece.util.js";
+  import { result } from "$lib/utils/result.util";
+  import PieceCard from "./PieceCard.svelte";
 
   let {
     piece,
@@ -24,6 +29,7 @@
   }: {
     piece: Pick<
       Piece,
+      | "id"
       | "name"
       | "slug"
       | "price"
@@ -37,7 +43,7 @@
       | "updatedAt"
       | "artist_name"
     > & {
-      gallery: Pick<Gallery, "name" | "slug">;
+      gallery: Pick<Gallery, "id" | "name" | "slug">;
       images: Pick<Image, "url" | "thumbhash" | "width" | "height">[];
     };
 
@@ -48,6 +54,16 @@
 
   const dimensions = $derived(PieceUtil.format_dimensions(piece));
   const [primary_image, ...rest_images] = $derived(piece.images);
+
+  const related_pieces = $derived(
+    search_published_pieces_remote({
+      limit: 5,
+      where: {
+        id: { nin: [piece.id] },
+        gallery_id: { in: [piece.gallery.id] },
+      },
+    }),
+  );
 </script>
 
 {#if primary_image}
@@ -210,10 +226,12 @@
 </section>
 
 {#if prerendered.description}
+  {@const html = prerendered.description}
+
   <section id="description">
     <Card title="Description">
       {#snippet content()}
-        <PrerenderedMarkdown html={prerendered.description} />
+        <PrerenderedMarkdown {html} />
       {/snippet}
     </Card>
   </section>
@@ -231,3 +249,31 @@
     </TermDescription>
   </dl>
 </footer>
+
+<aside
+  id="related"
+  class="mt-7"
+>
+  <div>
+    <h2>Related Pieces</h2>
+    <p class="text-muted-foreground">Other pieces from the same gallery</p>
+  </div>
+
+  <svelte:boundary>
+    {#snippet pending()}
+      <Skeleton class="h-24 w-full" />
+    {/snippet}
+
+    <CardList
+      items={result.unwrap_or(await related_pieces, [])}
+      empty={{
+        icon: "lucide/frame",
+        title: "No related pieces",
+      }}
+    >
+      {#snippet card(piece)}
+        <PieceCard {piece} />
+      {/snippet}
+    </CardList>
+  </svelte:boundary>
+</aside>
