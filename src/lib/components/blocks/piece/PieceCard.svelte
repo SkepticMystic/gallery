@@ -13,7 +13,7 @@
   let {
     piece,
   }: {
-    piece: Pick<Piece, "name" | "slug" | "medium" | "price"> & {
+    piece: Pick<Piece, "id" | "name" | "slug" | "medium" | "price"> & {
       gallery?: Pick<Gallery, "name" | "slug">;
       images: Pick<Image, "url" | "thumbhash">[];
     };
@@ -29,6 +29,19 @@
       piece,
     ),
   );
+
+  const gallery_href = $derived(
+    piece.gallery
+      ? resolve(
+          page.route.id?.startsWith("/s/")
+            ? "/s/gallery/[slug]"
+            : page.route.id?.startsWith("/admin/")
+              ? "/admin/gallery/[slug]"
+              : "/gallery/[slug]",
+          piece.gallery,
+        )
+      : null,
+  );
 </script>
 
 <Card>
@@ -43,11 +56,15 @@
 
     <div class="flex flex-col gap-3">
       {#if image}
-        <a {href}>
+        <a
+          {href}
+          aria-label={piece.name}
+        >
           <Picture
             {image}
             width={200}
             height={200}
+            alt={piece.name}
           />
         </a>
       {/if}
@@ -75,7 +92,7 @@
             term="Gallery"
           >
             {#snippet description()}
-              <Anchor href={resolve("/s/gallery/[slug]", gallery)}>
+              <Anchor href={gallery_href}>
                 {gallery.name}
               </Anchor>
             {/snippet}

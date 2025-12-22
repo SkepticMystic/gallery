@@ -51,6 +51,7 @@
           {image}
           width={200}
           height={200}
+          alt={gallery.name}
           prioritize={i === 0}
         />
       {/each}
