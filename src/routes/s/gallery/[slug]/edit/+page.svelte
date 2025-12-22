@@ -20,7 +20,12 @@
   <header>
     <h1>{gallery.name}</h1>
 
-    <Anchor href="#images">Jump to Images</Anchor>
+    <Anchor
+      icon="lucide/arrow-left"
+      href="."
+    >
+      Back to Gallery
+    </Anchor>
   </header>
 
   <GalleryForm

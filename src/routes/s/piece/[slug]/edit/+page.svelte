@@ -3,6 +3,7 @@
   import UploadImagesForm from "$lib/components/form/image/UploadImagesForm.svelte";
   import PieceForm from "$lib/components/form/piece/PieceForm.svelte";
   import Picture from "$lib/components/image/Picture.svelte";
+  import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import Badge from "$lib/components/ui/badge/badge.svelte";
   import ButtonGroup from "$lib/components/ui/button-group/button-group.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
@@ -18,7 +19,16 @@
 
 <article>
   <header>
-    <h1>{piece.name}</h1>
+    <div class="space-y-2">
+      <h1>{piece.name}</h1>
+
+      <Anchor
+        href="."
+        icon="lucide/arrow-left"
+      >
+        Back to Piece
+      </Anchor>
+    </div>
   </header>
 
   <PieceForm
