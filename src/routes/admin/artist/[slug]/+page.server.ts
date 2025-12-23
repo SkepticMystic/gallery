@@ -4,50 +4,62 @@ import { db } from "$lib/server/db/drizzle.db";
 import { Repo } from "$lib/server/db/repos/index.repo";
 import { get_session } from "$lib/services/auth.service";
 import { Markdown } from "$lib/utils/markdown/markdown.util";
-import { SEOUtil } from "$lib/utils/seo/seo.util";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params }) => {
-  const [_admin, gallery] = await Promise.all([
+  const [_admin, artist] = await Promise.all([
     get_session({ admin: true }),
 
     Repo.query(
-      db.query.gallery.findFirst({
-        where: (gallery, { eq }) => eq(gallery.slug, params.slug),
+      db.query.artist.findFirst({
+        where: (artist, { eq }) => eq(artist.slug, params.slug),
 
         with: {
           images: {
             limit: IMAGE_HOSTING.LIMITS.MAX_COUNT.PER_RESOURCE,
+
             columns: {
               id: true,
               url: true,
               width: true,
               height: true,
               thumbhash: true,
+              is_approved: true,
             },
           },
 
           pieces: {
-            limit: 20,
+            limit: 10,
+
             columns: {
               id: true,
               name: true,
               slug: true,
-              medium: true,
               price: true,
-              year_created: true,
+              medium: true,
               artist_name: true,
+              is_published: true,
             },
+
             with: {
+              gallery: {
+                columns: {
+                  name: true,
+                  slug: true,
+                },
+              },
+
               images: {
                 limit: 1,
+
                 columns: {
                   id: true,
                   url: true,
                   width: true,
                   height: true,
                   thumbhash: true,
+                  is_approved: true,
                 },
               },
             },
@@ -57,20 +69,18 @@ export const load = (async ({ params }) => {
     ),
   ]);
 
-  if (!gallery.ok || !gallery.data) {
+  if (!artist.ok || !artist.data) {
     error(404, ERROR.NOT_FOUND);
   }
 
   const prerendered = {
-    description: gallery.data.description
-      ? Markdown.to_html(gallery.data.description)
+    description: artist.data.description
+      ? Markdown.to_html(artist.data.description)
       : null,
   };
 
   return {
     prerendered,
-    gallery: gallery.data,
-
-    seo: SEOUtil.from_resource(gallery.data),
+    artist: artist.data,
   };
 }) satisfies PageServerLoad;

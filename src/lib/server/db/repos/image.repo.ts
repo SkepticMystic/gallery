@@ -67,15 +67,15 @@ const delete_many = async (
   return result.suc(images);
 };
 
-const set_admin_approved = async (input: {
+const set_approved = async (input: {
   id: string;
-  admin_approved: boolean;
+  is_approved: boolean;
 }): Promise<App.Result<Image>> => {
   try {
     const res = await Repo.update_one(
       db
         .update(ImageTable)
-        .set({ admin_approved: input.admin_approved })
+        .set({ is_approved: input.is_approved })
         .where(eq(ImageTable.id, input.id))
         .returning(),
     );
@@ -85,14 +85,14 @@ const set_admin_approved = async (input: {
     if (error instanceof DrizzleQueryError) {
       Log.error(
         { message: error.message },
-        "ImageRepo.set_admin_approved.error DrizzleQueryError",
+        "ImageRepo.set_approved.error DrizzleQueryError",
       );
 
       captureException(error);
 
       return result.err(ERROR.INTERNAL_SERVER_ERROR);
     } else {
-      Log.error(error, "ImageRepo.set_admin_approved.error unknown");
+      Log.error(error, "ImageRepo.set_approved.error unknown");
 
       captureException(error);
 
@@ -106,5 +106,5 @@ export const ImageRepo = {
   count: count_images,
   delete_many,
 
-  set_admin_approved,
+  set_approved,
 };

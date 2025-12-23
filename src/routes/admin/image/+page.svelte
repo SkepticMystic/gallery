@@ -70,7 +70,7 @@
         }),
     }),
 
-    column.accessor("admin_approved", {
+    column.accessor("is_approved", {
       meta: { label: "Status" },
 
       cell: ({ getValue }) => (getValue() ? "Approved" : "Pending"),
@@ -92,14 +92,11 @@
       }
     },
 
-    approve: async (image_id: string, admin_approved: boolean) => {
-      const res = await ImageClient.set_admin_approved({
-        id: image_id,
-        admin_approved,
-      });
+    toggle_approved: async (image_id: string) => {
+      const res = await ImageClient.toggle_approved(image_id);
 
       if (res.ok) {
-        images = Items.patch(images, image_id, { admin_approved });
+        images = Items.patch(images, image_id, res.data);
       }
     },
   };
@@ -124,13 +121,11 @@
     data={images}
     actions={(row) => [
       {
-        icon: row.original.admin_approved
+        icon: row.original.is_approved
           ? "lucide/x-circle"
           : "lucide/check-circle",
-        title: row.original.admin_approved
-          ? "Remove approval"
-          : "Approve image",
-        onselect: () => actions.approve(row.id, !row.original.admin_approved),
+        title: row.original.is_approved ? "Remove approval" : "Approve image",
+        onselect: () => actions.toggle_approved(row.id),
       },
       {
         icon: "lucide/x",

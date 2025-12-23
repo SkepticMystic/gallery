@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { ArtistClient } from "$lib/clients/artist/artist.client.js";
   import Anchor from "$lib/components/ui/anchor/Anchor.svelte";
   import DataTable from "$lib/components/ui/data-table/data-table.svelte";
+  import { renderComponent } from "$lib/components/ui/data-table/render-helpers.js";
   import Field from "$lib/components/ui/field/Field.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { Format } from "$lib/utils/format.util.js";
@@ -17,6 +19,12 @@
   const columns = [
     column.accessor("name", {
       meta: { label: "Name" },
+
+      cell: ({ row, getValue }) =>
+        renderComponent(Anchor, {
+          content: getValue(),
+          href: resolve("/admin/artist/[slug]", row.original),
+        }),
 
       footer: ({ table }) =>
         Format.number(table.getRowModel().flatRows.length) + " artists",
@@ -50,11 +58,11 @@
       }
     },
 
-    approve: async (id: string, is_approved: boolean) => {
-      const res = await ArtistClient.admin_approve({ id, is_approved });
+    toggle_approved: async (id: string) => {
+      const res = await ArtistClient.toggle_approved(id);
 
       if (res.ok) {
-        artists = Items.patch(artists, id, { is_approved });
+        artists = Items.patch(artists, id, res.data);
       }
     },
   };
@@ -86,7 +94,7 @@
           ? "Remove approval"
           : "Approve artist",
 
-        onselect: () => actions.approve(row.id, !row.original.is_approved),
+        onselect: () => actions.toggle_approved(row.id),
       },
       {
         icon: "lucide/x",

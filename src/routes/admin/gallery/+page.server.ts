@@ -16,7 +16,7 @@ export const load = (async () => {
           id: true,
           name: true,
           slug: true,
-          admin_approved: true,
+          is_approved: true,
           createdAt: true,
         },
 

@@ -1,6 +1,7 @@
 import type { Branded } from "$lib/interfaces/zod/zod.types";
 import { db } from "$lib/server/db/drizzle.db";
 import { ArtistTable } from "$lib/server/db/models/artist.model";
+import { and, eq } from "drizzle-orm";
 import { Repo } from "./index.repo";
 
 const get_by_normalized_name = async (
@@ -23,33 +24,33 @@ const insert_one = async (input: typeof ArtistTable.$inferInsert) => {
   return artist;
 };
 
-// const update_one = async (
-//   find: {
-//     id: string;
-//     // org_id: string
-//   },
-//   update: Partial<typeof ArtistTable.$inferInsert>,
-// ) => {
-//   console.log("ArtistRepo.update_one.input", update, find);
+const update_one = async (
+  find: {
+    id: string;
+    // org_id: string
+  },
+  update: Partial<typeof ArtistTable.$inferInsert>,
+) => {
+  console.log("ArtistRepo.update_one.input", update, find);
 
-//   const artist = await Repo.update_one(
-//     db
-//       .update(ArtistTable)
-//       .set(update)
-//       .where(
-//         and(
-//           eq(ArtistTable.id, find.id),
-//           // eq(ArtistTable.org_id, find.org_id), // TODO: Currently just an admin thing then, I guess?
-//         ),
-//       )
-//       .returning(),
-//   );
+  const artist = await Repo.update_one(
+    db
+      .update(ArtistTable)
+      .set(update)
+      .where(
+        and(
+          eq(ArtistTable.id, find.id),
+          // eq(ArtistTable.org_id, find.org_id), // TODO: Currently just an admin thing then, I guess?
+        ),
+      )
+      .returning(),
+  );
 
-//   return artist;
-// };
+  return artist;
+};
 
 export const ArtistRepo = {
   get_by_normalized_name,
   insert_one,
-  // update_one,
+  update_one,
 };

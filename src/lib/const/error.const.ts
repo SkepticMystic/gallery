@@ -1,5 +1,7 @@
 const CODES = [
   "INVALID_INPUT",
+  "UNAUTHORIZED",
+  "FORBIDDEN",
   "NOT_FOUND",
   "DUPLICATE",
   "INTERNAL_SERVER_ERROR",
@@ -12,6 +14,18 @@ export const ERROR = {
     level: "error",
     code: "INVALID_INPUT",
     message: "Invalid input",
+  },
+  UNAUTHORIZED: {
+    status: 401,
+    level: "error",
+    code: "UNAUTHORIZED",
+    message: "Unauthorized",
+  },
+  FORBIDDEN: {
+    status: 403,
+    level: "error",
+    code: "FORBIDDEN",
+    message: "Forbidden",
   },
   NOT_FOUND: {
     status: 404,

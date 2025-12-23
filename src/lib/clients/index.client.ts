@@ -1,5 +1,6 @@
 import { goto } from "$app/navigation";
 import { resolve } from "$app/paths";
+import type { MaybePromise } from "$lib/interfaces";
 import { session } from "$lib/stores/session.store";
 import { BetterAuth, type BetterAuthResult } from "$lib/utils/better-auth.util";
 import { result } from "$lib/utils/result.util";
@@ -14,6 +15,7 @@ type ClientRequestOptions<I, D> = {
   confirm: ((input: I) => string) | string | null;
   suc_msg: ((input: I, data: D) => string) | string | null;
   validate_session: boolean;
+  on_success?: (data: D) => MaybePromise<unknown>;
 };
 const DEFAULT_OPTIONS: ClientRequestOptions<unknown, unknown> = {
   prompt: null,
@@ -21,6 +23,7 @@ const DEFAULT_OPTIONS: ClientRequestOptions<unknown, unknown> = {
   suc_msg: null,
   optimistic: false,
   validate_session: true,
+  on_success: undefined,
 };
 
 const wrap = <I, D>(
@@ -90,6 +93,10 @@ const wrap = <I, D>(
               ? resolved.suc_msg(input, res.data)
               : resolved.suc_msg,
           );
+        }
+
+        if (resolved.on_success) {
+          await resolved.on_success(res.data);
         }
       } else {
         toast.warning(res.error.message);

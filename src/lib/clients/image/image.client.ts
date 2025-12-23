@@ -1,7 +1,7 @@
 import { thumbHashToDataURL } from "thumbhash";
 import {
   admin_delete_image_remote,
-  admin_set_image_approved_remote,
+  toggle_image_approved_remote,
   delete_image_remote,
 } from "../../remote/image/image.remote";
 import type { Image } from "../../server/db/models/image.model";
@@ -33,12 +33,7 @@ export const ImageClient = {
         )
       : undefined,
 
-  set_admin_approved: Client.wrap(
-    (input: Parameters<typeof admin_set_image_approved_remote>[0]) =>
-      admin_set_image_approved_remote(input),
-    {
-      suc_msg: (input) =>
-        `Image ${input.admin_approved ? "approved" : "denied"}`,
-    },
+  toggle_approved: Client.wrap((image_id: string) =>
+    toggle_image_approved_remote(image_id),
   ),
 };

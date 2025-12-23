@@ -6,7 +6,7 @@ import type { PageServerLoad } from "./$types";
 export const load = (async () => {
   const galleries = await Repo.query(
     db.query.gallery.findMany({
-      where: (gallery, { eq }) => eq(gallery.admin_approved, true),
+      where: (gallery, { eq }) => eq(gallery.is_approved, true),
       orderBy: (gallery, { desc }) => [desc(gallery.createdAt)],
 
       columns: {

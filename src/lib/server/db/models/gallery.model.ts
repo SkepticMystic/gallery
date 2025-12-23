@@ -52,7 +52,7 @@ export const GalleryTable = pgTable(
     coord_lat: doublePrecision().default(0).notNull(),
     coord_lng: doublePrecision().default(0).notNull(),
 
-    admin_approved: boolean().default(false).notNull(),
+    is_approved: boolean().default(false).notNull(),
 
     ...Schema.timestamps,
   },

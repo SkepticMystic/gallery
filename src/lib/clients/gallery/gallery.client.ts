@@ -1,7 +1,7 @@
 import {
-  admin_approve_gallery_remote,
   admin_delete_gallery_remote,
   delete_gallery_by_id_remote,
+  toggle_gallery_approved_remote,
 } from "$lib/remote/gallery/gallery.remote";
 import { Client } from "../index.client";
 
@@ -21,8 +21,7 @@ export const GalleryClient = {
     },
   ),
 
-  admin_approve: Client.wrap(
-    (input: Parameters<typeof admin_approve_gallery_remote>[0]) =>
-      admin_approve_gallery_remote(input),
+  toggle_approved: Client.wrap((gallery_id: string) =>
+    toggle_gallery_approved_remote(gallery_id),
   ),
 };

@@ -9,6 +9,7 @@
   import type { Gallery } from "$lib/server/db/models/gallery.model";
   import type { Image } from "$lib/server/db/models/image.model";
   import type { IHTML } from "$lib/utils/html/html.util";
+  import { SEOUtil } from "$lib/utils/seo/seo.util";
   import { Url } from "$lib/utils/urls";
   import { parsePhoneNumberFromString as parse_phone_number } from "libphonenumber-js/min";
   import type { ComponentProps } from "svelte";
@@ -67,7 +68,10 @@
       <div class="flex flex-col gap-1">
         {#each gallery.urls as { data, label } (data)}
           <Anchor
-            href={data}
+            href={SEOUtil.utmify(data, {
+              medium: "textlink",
+              term: gallery.name,
+            })}
             target="_blank"
             icon="lucide/globe"
             rel="noopener noreferrer"

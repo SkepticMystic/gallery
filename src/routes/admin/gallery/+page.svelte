@@ -42,7 +42,7 @@
       cell: ({ getValue }) => Format.number(getValue().length),
     }),
 
-    column.accessor("admin_approved", {
+    column.accessor("is_approved", {
       meta: { label: "Status" },
 
       cell: ({ getValue }) => (getValue() ? "Approved" : "Pending"),
@@ -64,13 +64,11 @@
       }
     },
 
-    approve: async (gallery_id: string, approved: boolean) => {
-      const res = await GalleryClient.admin_approve({ gallery_id, approved });
+    toggle_approved: async (gallery_id: string) => {
+      const res = await GalleryClient.toggle_approved(gallery_id);
 
       if (res.ok) {
-        galleries = Items.patch(galleries, gallery_id, {
-          admin_approved: approved,
-        });
+        galleries = Items.patch(galleries, gallery_id, res.data);
       }
     },
   };
@@ -95,13 +93,11 @@
     data={galleries}
     actions={(row) => [
       {
-        icon: row.original.admin_approved
+        icon: row.original.is_approved
           ? "lucide/x-circle"
           : "lucide/check-circle",
-        title: row.original.admin_approved
-          ? "Remove approval"
-          : "Approve gallery",
-        onselect: () => actions.approve(row.id, !row.original.admin_approved),
+        title: row.original.is_approved ? "Remove approval" : "Approve gallery",
+        onselect: () => actions.toggle_approved(row.id),
       },
       {
         icon: "lucide/x",

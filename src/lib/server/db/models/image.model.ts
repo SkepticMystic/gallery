@@ -54,7 +54,7 @@ export const ImageTable = pgTable(
     width: integer().notNull(),
     height: integer().notNull(),
 
-    admin_approved: boolean().default(false).notNull(),
+    is_approved: boolean().default(false).notNull(),
 
     ...Schema.timestamps,
   },

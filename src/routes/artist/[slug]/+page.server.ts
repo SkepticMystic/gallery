@@ -22,7 +22,7 @@ export const load = (async ({ params }) => {
       with: {
         images: {
           limit: IMAGE_HOSTING.LIMITS.MAX_COUNT.PER_RESOURCE,
-          where: (d, { eq }) => eq(d.admin_approved, true),
+          where: (d, { eq }) => eq(d.is_approved, true),
 
           columns: {
             id: true,
@@ -55,7 +55,7 @@ export const load = (async ({ params }) => {
 
             images: {
               limit: 1,
-              where: (d, { eq }) => eq(d.admin_approved, true),
+              where: (d, { eq }) => eq(d.is_approved, true),
 
               columns: {
                 id: true,

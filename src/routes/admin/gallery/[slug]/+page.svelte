@@ -10,13 +10,10 @@
   let gallery = $state(data.gallery);
 
   const toggle_approval = async () => {
-    const res = await GalleryClient.admin_approve({
-      gallery_id: gallery.id,
-      approved: !gallery.admin_approved,
-    });
+    const res = await GalleryClient.toggle_approved(gallery.id);
 
     if (res.ok) {
-      gallery.admin_approved = !gallery.admin_approved;
+      gallery.is_approved = !gallery.is_approved;
     }
   };
 </script>
@@ -45,13 +42,11 @@
 
     <ButtonGroup>
       <Button
-        variant={gallery.admin_approved ? "destructive" : "default"}
-        icon={gallery.admin_approved
-          ? "lucide/x-circle"
-          : "lucide/check-circle"}
+        variant={gallery.is_approved ? "destructive" : "default"}
+        icon={gallery.is_approved ? "lucide/x-circle" : "lucide/check-circle"}
         onclick={toggle_approval}
       >
-        {gallery.admin_approved ? "Remove Approval" : "Approve"}
+        {gallery.is_approved ? "Remove Approval" : "Approve"}
       </Button>
     </ButtonGroup>
   </header>

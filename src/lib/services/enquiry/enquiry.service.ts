@@ -28,7 +28,7 @@ const create = async (
     ]);
     if (!resource.ok) {
       return resource;
-    } else if (!resource.data) {
+    } else if (!resource.data || !resource.data.org_id) {
       return result.err(ERROR.NOT_FOUND);
     }
 
@@ -40,7 +40,7 @@ const create = async (
         where: (member, { eq, and }) =>
           and(
             eq(member.role, "owner"),
-            eq(member.organizationId, resource.data.org_id),
+            eq(member.organizationId, resource.data.org_id!),
           ),
       }),
     );

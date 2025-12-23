@@ -17,7 +17,7 @@ export const load = (async () => {
           url: true,
           resource_id: true,
           resource_kind: true,
-          admin_approved: true,
+          is_approved: true,
           width: true,
           height: true,
           size: true,

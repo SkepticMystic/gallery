@@ -1,11 +1,16 @@
-import { command, query } from "$app/server";
+import { resolve } from "$app/paths";
+import { command, form, query } from "$app/server";
+import { ERROR } from "$lib/const/error.const";
 import { query_schema } from "$lib/schema/query/query.schema";
 import { db } from "$lib/server/db/drizzle.db";
-import { ArtistTable } from "$lib/server/db/models/artist.model";
+import { ArtistSchema, ArtistTable } from "$lib/server/db/models/artist.model";
 import { Repo } from "$lib/server/db/repos/index.repo";
-import { get_session } from "$lib/services/auth.service";
+import { ArtistService } from "$lib/services/artist/artist.service";
+import { get_seller_session, get_session } from "$lib/services/auth.service";
 import { ArtistUtil } from "$lib/utils/artist/artist.util";
 import { Log } from "$lib/utils/logger.util";
+import { result } from "$lib/utils/result.util";
+import { invalid, redirect } from "@sveltejs/kit";
 import { count, eq } from "drizzle-orm";
 import z from "zod";
 
@@ -50,31 +55,33 @@ export const get_artist_by_name_remote = query.batch(
   },
 );
 
-// export const create_artist_remote = form(
-//   ArtistSchema.insert, //
-//   async (input) => {
-//     console.log("create_artist_remote.input", input);
+export const upsert_artist_remote = form(
+  ArtistSchema.insert.extend({ id: z.uuid().optional() }),
+  async (input) => {
+    console.log("upsert_artist_remote.input", input);
 
-//     const { session } = await get_seller_session();
+    const { session } = await get_seller_session({ admin: true });
 
-//     const res = await ArtistService.insert_one({
-//       ...input,
-//       created_by_org_id: session.org_id,
-//     });
+    const res = await (input.id
+      ? ArtistService.update_one({ id: input.id }, input)
+      : ArtistService.insert_one({
+          ...input,
+          created_by_org_id: session.org_id,
+        }));
 
-//     console.log("create_artist_remote.res", res);
+    console.log("upsert_artist_remote.res", res);
 
-//     if (!res.ok) {
-//       if (res.error.path) {
-//         invalid(res.error);
-//       } else {
-//         return res;
-//       }
-//     } else {
-//       redirect(302, resolve("/s/artist/[slug]", res.data));
-//     }
-//   },
-// );
+    if (!res.ok) {
+      if (res.error.path) {
+        invalid(res.error);
+      } else {
+        return res;
+      }
+    } else {
+      redirect(302, resolve("/artist/[slug]", res.data));
+    }
+  },
+);
 
 const artist_query_schema = query_schema(
   z.object({
@@ -141,16 +148,29 @@ export const admin_delete_artist_remote = command(
   },
 );
 
-export const admin_approve_artist_remote = command(
-  z.object({ id: z.uuid(), is_approved: z.boolean() }),
-  async (input) => {
+export const toggle_artist_approved_remote = command(
+  z.uuid(),
+  async (artist_id) => {
     await get_session({ admin: true });
 
+    // Get current state
+    const artist = await Repo.query(
+      db.query.artist.findFirst({
+        where: (artist, { eq }) => eq(artist.id, artist_id),
+        columns: { is_approved: true },
+      }),
+    );
+
+    if (!artist.ok || !artist.data) {
+      return result.err(ERROR.NOT_FOUND);
+    }
+
+    // Toggle the approval state
     return await Repo.update_one(
       db
         .update(ArtistTable)
-        .set({ is_approved: input.is_approved })
-        .where(eq(ArtistTable.id, input.id))
+        .set({ is_approved: !artist.data.is_approved })
+        .where(eq(ArtistTable.id, artist_id))
         .returning(),
     );
   },

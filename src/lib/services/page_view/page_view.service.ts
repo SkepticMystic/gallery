@@ -53,7 +53,7 @@ const create = async (
     ]);
     if (!resource.ok) {
       return resource;
-    } else if (!resource.data) {
+    } else if (!resource.data || !resource.data.org_id) {
       return result.err(ERROR.NOT_FOUND);
     }
 

@@ -1,9 +1,12 @@
+import { getRequestEvent } from "$app/server";
+import { format_bytes } from "$lib/components/ui/file-drop-zone";
 import { captureException } from "@sentry/sveltekit";
 import { ERROR } from "../../const/error.const";
 import { IMAGE_HOSTING } from "../../const/image/image_hosting.const";
+import { db } from "../../server/db/drizzle.db";
 import type { Image } from "../../server/db/models/image.model";
 import { ImageRepo } from "../../server/db/repos/image.repo";
-import { Format } from "../../utils/format.util";
+import { Repo } from "../../server/db/repos/index.repo";
 import { Log } from "../../utils/logger.util";
 import { result } from "../../utils/result.util";
 import { ResourceService } from "../resource/resource.service";
@@ -35,16 +38,27 @@ const check_count_limit = async (
   }
 };
 
-const set_admin_approved = async (input: {
-  id: string;
-  admin_approved: boolean;
-}) => {
+const toggle_approved = async (image_id: string) => {
   try {
-    const res = await ImageRepo.set_admin_approved(input);
+    // Get current state using a query
+    const res = await Repo.query(
+      db.query.image.findFirst({
+        where: (image, { eq }) => eq(image.id, image_id),
+        columns: { is_approved: true },
+      }),
+    );
 
-    return res;
+    if (!res.ok || !res.data) {
+      return result.err(ERROR.NOT_FOUND);
+    }
+
+    // Toggle the approval state
+    return await ImageRepo.set_approved({
+      id: image_id,
+      is_approved: !res.data.is_approved,
+    });
   } catch (error) {
-    Log.error(error, "BusinessService.set_admin_approved.error unknown");
+    Log.error(error, "ImageService.toggle_approved.error unknown");
 
     captureException(error);
 
@@ -61,14 +75,8 @@ export const ImageService = {
       if (file.size > IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES) {
         return result.err({
           status: 413,
-          message: `Image exceeds size limit of ${Format.number(
-            IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES / (1024 * 1024),
-            {
-              style: "unit",
-              unit: "megabyte",
-              unitDisplay: "long",
-              maximumFractionDigits: 1,
-            },
+          message: `Image exceeds size limit of ${format_bytes(
+            IMAGE_HOSTING.LIMITS.MAX_FILE_SIZE_BYTES,
           )}`,
         });
       }
@@ -78,10 +86,20 @@ export const ImageService = {
         ResourceService.get_by_key(input),
       ]);
 
-      if (!resource.ok || resource.data.org_id !== input.org_id) {
-        return result.err(ERROR.NOT_FOUND);
-      } else if (!count_limit.ok) {
+      if (!count_limit.ok) {
         return count_limit;
+      } else if (!resource.ok) {
+        return result.err(ERROR.NOT_FOUND);
+      } else if (!resource.data.org_id) {
+        const event = getRequestEvent();
+
+        if (!event.locals.session) {
+          return result.err(ERROR.UNAUTHORIZED);
+        } else if (event.locals.session.user.role !== "admin") {
+          return result.err(ERROR.FORBIDDEN);
+        }
+      } else if (resource.data.org_id !== input.org_id) {
+        return result.err(ERROR.FORBIDDEN);
       }
 
       const [upload, thumbhash] = await Promise.all([
@@ -138,5 +156,5 @@ export const ImageService = {
     }
   },
 
-  set_admin_approved,
+  toggle_approved,
 };

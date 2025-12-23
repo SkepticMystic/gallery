@@ -26,7 +26,7 @@ export const load = (async ({ params }) => {
             id: true,
             name: true,
             slug: true,
-            admin_approved: true,
+            is_approved: true,
           },
         },
 
@@ -46,7 +46,7 @@ export const load = (async ({ params }) => {
   );
 
   // Only show pieces from approved galleries
-  if (!piece.ok || !piece.data || !piece.data.gallery.admin_approved) {
+  if (!piece.ok || !piece.data || !piece.data.gallery.is_approved) {
     Log.info(piece);
     error(404, ERROR.NOT_FOUND);
   }

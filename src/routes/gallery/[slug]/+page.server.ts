@@ -16,7 +16,7 @@ export const load = (async ({ params }) => {
         and(
           //
           eq(gallery.slug, params.slug),
-          eq(gallery.admin_approved, true),
+          eq(gallery.is_approved, true),
         ),
 
       with: {

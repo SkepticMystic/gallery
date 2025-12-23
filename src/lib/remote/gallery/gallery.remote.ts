@@ -18,7 +18,7 @@ export const get_random_public_gallery_remote = query(async () => {
     db
       .select()
       .from(GalleryTable)
-      .where(eq(GalleryTable.admin_approved, true))
+      .where(eq(GalleryTable.is_approved, true))
       .orderBy(sql.raw("RANDOM()"))
       .limit(1)
       .execute(),
@@ -32,7 +32,7 @@ export const count_public_galleries_remote = query(async () => {
     db
       .select({ count: count(GalleryTable.id) })
       .from(GalleryTable)
-      .where(eq(GalleryTable.admin_approved, true)),
+      .where(eq(GalleryTable.is_approved, true)),
   );
 
   return res.ok ? (res.data.at(0)?.count ?? 0) : 0;
@@ -113,16 +113,29 @@ export const admin_delete_gallery_remote = command(
   },
 );
 
-export const admin_approve_gallery_remote = command(
-  z.object({ gallery_id: z.uuid(), approved: z.boolean() }),
-  async (input) => {
+export const toggle_gallery_approved_remote = command(
+  z.uuid(),
+  async (gallery_id) => {
     await get_session({ admin: true });
 
+    // Get current state
+    const gallery = await Repo.query(
+      db.query.gallery.findFirst({
+        where: (gallery, { eq }) => eq(gallery.id, gallery_id),
+        columns: { is_approved: true },
+      }),
+    );
+
+    if (!gallery.ok || !gallery.data) {
+      return result.err({ message: "Gallery not found" });
+    }
+
+    // Toggle the approval state
     return await Repo.update_one(
       db
         .update(GalleryTable)
-        .set({ admin_approved: input.approved })
-        .where(eq(GalleryTable.id, input.gallery_id))
+        .set({ is_approved: !gallery.data.is_approved })
+        .where(eq(GalleryTable.id, gallery_id))
         .returning(),
     );
   },
